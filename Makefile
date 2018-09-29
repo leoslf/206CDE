@@ -15,7 +15,7 @@ venv_init: directory_structure
 directory_structure: $(TARGET)/ docs/ tests/
 
 %/:
-	$(MKDIR) -p $@
+	mkdir -p $@
 
 deps:
 	$(VENV_ACTIVATE) $(BIN)/pip install -Ur $(PIP_REQUIREMENTS)

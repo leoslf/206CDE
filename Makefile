@@ -1,3 +1,4 @@
+TARGET=TowngasBilling
 VENV_DIR=venv
 BIN=$(VENV_DIR)/bin
 PIP_REQUIREMENTS=requirements.txt
@@ -8,8 +9,13 @@ all: venv
 
 venv: venv_init $(BIN)/activate deps
 
-venv_init:
+venv_init: directory_structure
 	@test -d $(VENV_DIR) || virtualenv $(VENV_DIR)
+
+directory_structure: $(TARGET)/ docs/ tests/
+
+%/:
+	$(MKDIR) -p $@
 
 deps:
 	$(VENV_ACTIVATE) $(BIN)/pip install -Ur $(PIP_REQUIREMENTS)

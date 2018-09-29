@@ -20,7 +20,6 @@ directory_structure: $(TARGET)/ docs/ tests/
 deps:
 	$(VENV_ACTIVATE) $(BIN)/pip install -Ur $(PIP_REQUIREMENTS)
 
-
 freeze: venv
 	$(VENV_ACTIVATE) $(BIN)/pip freeze > $(PIP_REQUIREMENTS)
 	

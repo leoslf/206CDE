@@ -1,0 +1,46 @@
+{% from 'macros.html' import table, modal, carousel %}
+
+{% extends 'base.html' %}
+{% block content %}
+    {% set btns = {
+        'images': {
+            'text' : 'Images',
+            'onclick' : "$('#album-dialog').modal('toggle');"
+            },
+        'images2': {
+            'text' : 'Album',
+            'onclick' : "$('#album-dialog2').modal('toggle');"
+            }
+        } %}
+    {% set results = [] %}
+    {% call table("Products", "Product", btns=btns, results_ref=results) %}
+        {% call modal("album-dialog", "Album") %}
+            {# {{ results[0] | default("not defined") }} #}
+            {% set images = g.OrderedDict_column(results[0]['rows'], 'image', nonempty_filter=true) %}
+            {# {% for filename in images %} #}
+            <div class="row">
+                {% for row in results[0]['rows'] %}
+                    <div class="col-sm-6 col-md-4">
+                        <div class="thumbnail">
+                            {# {% if row['image'] | length > 0 %} #}
+                                <img src="/images/{{ row['image'] }}" alt=""/>
+                            {# {% endif %} #}
+                            <div class="caption">
+                                <h5>{{ row['name'] }}</h3>
+                                <p>{{ row['description'] }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endcall %}
+        {% call modal("album-dialog2", "Album") %}
+            {# {{ results[0] | default("not defined") }} #}
+            {% set images = g.OrderedDict_column(results[0]['rows'], 'image', nonempty_filter=true) %}
+            {{ carousel(images) }}
+        {% endcall %}
+    {% endcall %}
+
+
+
+{% endblock %}

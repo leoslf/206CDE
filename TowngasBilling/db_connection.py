@@ -1,7 +1,7 @@
 from collections import OrderedDict
 import cx_Oracle
 import traceback
-from debug import *
+from TowngasBilling.debug import *
 
 credential = {
         "user": "G3_team001",
@@ -36,10 +36,12 @@ def query(table,
           *argv,
           **kwargs):
 
-    def _rows_generator(cursor):
-            columns = list(zip(*cursor.description))[0]
-            for row in cursor.fetchall():
-                yield OrderedDict(zip(columns, row))
+    def _rows_generator(cursor, columns):
+        for row in cursor.fetchall():
+            d = OrderedDict(zip(columns, row))
+            print (d)
+            if filter is None or (isinstance(d, dict) and any(column in d and d[column.lower()] == filter[column] for column in filter)):
+                yield d
 
     sql = "SELECT %s FROM %s" % (column, table) \
             + (" ORDER BY " + orderby if orderby is not None else "") \
@@ -52,8 +54,11 @@ def query(table,
         try:
             with conn.cursor() as cursor:
                 cursor.execute(sql)
+                columns = list(map(lambda s: s.lower(), list(zip(*cursor.description))[0]))
+                print ("columns:", columns)
+                print ("filter: ", filter)
 
-                rows = list(_rows_generator(cursor))
+                rows = list(_rows_generator(cursor, columns))
 
                 return rows if description == False else OrderedDict([("rows", rows), ("description", cursor.description), ("columns", columns)])
 

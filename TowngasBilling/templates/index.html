@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% set title = "Home" %}
+
+{% block content_without_container %}
+    <section id="intro">
+        <div class="container clearfix">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>{{ g.app_name }}</h1>
+                    <h3>Manage interaction with current and potential customers.</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="welcome">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="container">
+                    <h1>About</h1>
+                    <p>Please contact Administrator, Leo Sin for help: <a href="mailto:leosin.205CDE@gmail.com"><span class="glyphicon glyphicon-envelope"></span> Send Email</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

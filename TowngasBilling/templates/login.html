@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% set title = "Login" %}
+
+{% block content %}
+<!-- Login Page -->
+<div class="container bg-white">
+    <!-- Login Panel -->
+    <div id="login_panel">
+        <div class="panel panel-default">
+            <!-- Panel Heading -->
+            <div class="panel-heading">
+                <div class="panel-title">Login</div>
+            </div>
+            <!-- Panel Body -->
+            <div class="panel-body">
+                {% include 'msg.html' %}
+                <!-- Login Form -->
+                <form class="form-horizontal" method="post" action="login">
+                    <div class="container-fluid">
+                        <!-- Username Line -->
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-user"></span>
+                                </span>
+                                <input type="text" class="form-control" name="username" required="required" placeholder="Username"/>
+                            </div>
+                        </div>
+                        <!-- Password Line -->
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-lock"></span>
+                                </span>
+                                <input type="password" class="form-control" name="password" required="required" placeholder="Password"/>
+                            </div>
+                        </div>
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-success">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

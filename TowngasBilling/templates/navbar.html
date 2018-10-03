@@ -1,0 +1,63 @@
+{% from 'macros.html' import error %}
+{% set msg = [] %}
+{% set results = query("navigation", orderby="position", filter=dict(bar="shared"), err_msg=msg) %}
+
+
+{% if results is not none %}
+    <nav class="navbar navbar-default navbar-fixed-top" id="shared_navbar">
+        <div class="container">
+            <!-- Grouping Brand and Toggle => better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">
+                    <span><img alt="Brand" src="/images/logo.png" /></span> {{ g.app_name }}
+                </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="nav navbar-nav">
+                    {% for item in results %}
+                        <li><a href="/{{ item['href'] }}">{{ item['caption'] }}</a></li>
+                    {% endfor %}
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if 'username' in session and 'displayed_username' in session %}
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <span class="glyphicon glyphicon-user"></span> {{ str(session['displayed_username']) }} <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <!--
+                                <li><a href="/settings">Settings</a></li>
+                                -->
+                                {% set msg = [] %}
+                                {% if g.authentication(err_msg=msg) %}
+                                    <li><a href="/admin">Admin</a></li>
+                                {% else %}
+                                    {% if msg | length > 0 %}
+                                        <script>
+                                            alert("check console log");
+                                            console.log(`{{ msg[0] }}`);
+                                        </script>
+                                    {% endif %}
+                                {% endif %}
+                                <li role="separator" class="divider"></li>
+                                <li><a href="/logout">Logout</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                    {% endif %}
+                </ul>
+            </div> <!-- .navbar-collapse -->
+        </div> <!-- .container-fluid -->
+    </nav>
+    <script src="/navbar.js"></script>
+{% else %}
+    {{ error(msg[0]) }}
+{% endif %}
+

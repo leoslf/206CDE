@@ -1,0 +1,6 @@
+{% from 'macros.html' import table %}
+
+{% extends 'base.html' %}
+{% block content %}
+    {{ table("Audit Trail", "AuditTrail", ro=true) }}
+{% endblock %}

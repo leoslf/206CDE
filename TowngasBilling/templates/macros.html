@@ -1,0 +1,151 @@
+{# macro definitions #}
+
+{% macro alert(id, alert_type, icon) -%}
+    <div class="alert alert-{{ alert_type }} alert-dismissible hidden" id="{{ id }}" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <span class="glyphicon glyphicon-{{ icon }}"></span>
+    </div>
+{% endmacro %}
+
+
+{% macro error(msg) -%}
+    <script>
+        set_cookie("errmsg", "{% autoescape false %}{{ msg | replace('\n', '<br />') | replace('"', '\\"') }}{% endautoescape %}");
+    </script>
+    {% include 'msg.html' %}
+{%- endmacro %}
+
+{% macro carousel(images) -%}
+    <div id="carousel-example-generic" id="carousel" class="carousel slide" data-ride="carousel">
+        <!-- Indicators -->
+        <ol class="carousel-indicators">
+            {% for x in images %}
+                <li data-target="#carousel-example-generic" data-slide-to="{{ loop.index0 }}" class="{{ 'active' if loop.index0 == 0 else '' }}"></li>
+            {% endfor %}
+        </ol>
+        
+        <!-- Wrapper for slides -->
+        <div class="carousel-inner" role="listbox">
+            {% for filename in images %}
+                <div class="item {{ 'active' if loop.index0 == 0 else '' }}">
+                    <img class="center-block" src="images/{{ filename }}" alt="">
+                    <div class="carousel-caption">
+                        ...
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- Controls -->
+        <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+{%- endmacro %}
+
+{% macro modal(id, header_text) -%}
+    <div id="{{ id }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal-label">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" id="modal-label">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">{{ header_text }}</h4>
+                </div>
+                <div class="modal-body">
+                    {% if caller %}
+                        {{ caller() }}
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+                </div>
+            </div> <!-- /.modal-content -->
+        </div> <!-- /.modal-dialog -->
+    </div> <!-- /.modal -->
+{%- endmacro %}
+
+
+{% macro table(header_text, table, ro=false) -%}
+    <div class="row">
+        <div class="container-fluid">
+            <div class="page-header">
+                <h1>{{ header_text }}<!-- <small>Subtext for header</small> --></h1>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="container-fluid">
+            {% include 'msg.html' %}
+            {% if 'btns' in kwargs and isinstance(kwargs['btns'], dict) %}
+                {% for key in kwargs['btns'] %}
+                    {% set e = kwargs['btns'][key] %}
+                    <button id="{{ key }}" class="btn btn-default" type="button" onclick="{{ e['onclick'] if 'onclick' in e else ''}}">
+                        {{- e['text'] -}}
+                    </button>
+                {% endfor %}
+            {% endif %}
+            <button id="addrow_btn" class="btn btn-default {{ 'hidden' if ro == true else '' }} pull-right" type="button">
+                <span class="glyphicon glyphicon-plus"></span> Add Row
+            </button>
+        </div>
+    </div>
+    {% set err_msg = [] %}
+    {% set results = query(table, description=True, err_msg=err_msg, **kwargs) %}
+    {% if 'results_ref' in kwargs %}
+        {% do kwargs['results_ref'].append(results) %}
+    {% endif %}
+    {% if results is not none %}
+        <div class="row">
+            <div class="container-fluid ">
+                <form method="POST" action="/update_table">
+                    <div class="table-responsive">
+                        <table id="table" class="table table-striped table-hover {{ '' if ro == true else 'rw' }}">
+                            {% if 'columns' in results %}
+                                {% set columns = results['columns'] %}
+                                <thead>
+                                    <tr>
+                                        {% for column_name in columns %}
+                                            <th>{{ column_name }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                            {% else %}
+                                {{ error("`columns` not in results") }}
+                            {% endif %}
+                            <tbody>
+                                {% for row in results['rows'] %}
+                                    <tr>
+                                        {% for column_name in row %}
+                                            <td>{{ row[column_name] }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% call modal("row-dialog", "Record") %}
+                        TEST
+                    {% endcall %}
+                    {% if caller %}
+                        {{ caller() }}
+                    {% endif %}
+                    <input type="hidden" id="table_name" name="table_name" value="{{ table }}" />
+                    <button type="submit" class="btn btn-default">Submit</button>
+                    <button type="reset" class="btn btn-default" onclick="window.location.reload()">Reset</button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        {% set msg = "result is none, table = " + table + "\n" %}
+        {% if err_msg|length > 0 %}
+            {% set msg = msg + err_msg[0] %}
+        {% endif %}
+        {{ error(msg) }}
+    {% endif %}
+    <script src="/editabletbl.js"></script>
+{%- endmacro %}

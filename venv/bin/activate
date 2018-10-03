@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # This file must be used with "source bin/activate" *from bash*
 # you cannot run it directly
 
@@ -51,6 +52,8 @@ export PATH
 if ! [ -z "${PYTHONHOME+_}" ] ; then
     _OLD_VIRTUAL_PYTHONHOME="$PYTHONHOME"
     unset PYTHONHOME
+    PYTHONHOME="$VIRTUAL_ENV"
+    export PYTHONHOME
 fi
 
 if [ -z "${VIRTUAL_ENV_DISABLE_PROMPT-}" ] ; then
@@ -76,6 +79,3 @@ pydoc () {
 if [ -n "${BASH-}" ] || [ -n "${ZSH_VERSION-}" ] ; then
     hash -r 2>/dev/null
 fi
-
-export LD_LIBRARY_PATH=$VIRTUAL_ENV/lib:$LD_LIBRARY_PATH
-export DYLD_LIBRARY_PATH=$VIRTUAL_ENV/lib:$DYLD_LIBRARY_PATH

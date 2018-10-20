@@ -3,6 +3,7 @@
 import sys
 import os
 import traceback
+import json
 from flask import *
 from jinja2 import TemplateNotFound
 from TowngasBilling import app as application
@@ -28,6 +29,90 @@ def display(filename):
 def settings():
     return render_template("settings.html")
 
+@application.route("/check_for_record")
+def check_for_record():
+    if not logged_in():
+        return jsonify(result=False)
+
+    table = request.args.get("table")
+    values_json = request.args.get("values")
+    values = json.loads(values_json)
+
+    results = query(table, condition = " AND ".join(["%s = '%s'" % (key, values[key]) for key in values]))
+
+    # return jsonify(result=(len(query(table, filters=values)) > 0))
+    return jsonify(results=len(results) > 0)
+    
+
+@application.route("/register", methods = ["POST", "GET"])
+def register():
+    if request.method == "POST":
+        # Registration form submitted
+        login_keys = ["username", "password"]
+        customer_keys = ["given_name", "last_name", "HKID", "email"]
+        premise_keys = ["address"]
+
+        if not all(key in request.form for key in login_keys + customer_keys + premise_keys):
+            return errmsg("not all of the fields exist in request.form", request.referrer)
+
+        login = { key: request.form[key] for key in login_keys }
+        customer = { key: request.form[key] for key in customer_keys }
+        premise = { key: request.form[key] for key in premise_keys }
+
+        rc = -1
+        msg = []
+
+        connection = database_connection(autocommit=False)
+        try:
+            # insert if premise not exist
+            results = query("premise", condition="address = '%s'" % premise["address"], err_msg=msg, connection=connection)
+            if results is None:
+                return errmsg("Failed to query from premise, " + ", ".join(msg), request.referrer)
+                
+            if len(results) == 0:
+                # create record for premise
+                premise_id = insert("premise", values=premise, err_msg=msg, connection=connection)
+                if premise_id < 0:
+                    return errmsg("Failed to insert into premise: " + ", ".join(msg), request.referrer)
+            else:
+                premise_id = results[0]["id"]
+                if len(results) > 1:
+                    error("Unique constraint violated!")
+
+            # recieved premise_id
+
+            # create customer
+            customer_id = insert("customer", values=customer, err_msg=msg, connection=connection)
+            if customer_id < 0:
+                return errmsg("Failed to insert into customer, " + ", ".join(msg), request.referrer)
+            
+            # Place customer_id as foreign key of Login
+            login["customer_id"] = customer_id
+
+            # create login
+            login_id = insert("login", values=login, err_msg=msg, connection=connection)
+            if login_id < 0:
+                return errmsg("Failed to insert into login, " + ", ".join(msg), request.referrer)
+
+            # create account
+            account = {
+                    "customer_id": customer_id,
+                    "premise_id": premise_id
+            }
+
+            account_id = insert("account", values=account, err_msg=msg, connection=connection)
+            if account_id < 0:
+                return errmsg("Failed to insert into account, " + ", ".join(msg), request.referrer)
+
+            connection.commit()
+        finally:
+            connection.close()
+
+    # GET Request
+    if logged_in():
+        return redirect("/")
+    return render_template("register.html")
+
 @application.route("/login", methods = ["POST", "GET"])
 def login():
     # Login Already 
@@ -38,7 +123,7 @@ def login():
         # login form submitted
         result = None
         try:
-            results = query("staff", "username", "username='%s' AND password='%s'" % (request.form["username"], request.form["password"]))
+            results = query("login", "username", "username='%s' AND password='%s'" % (request.form["username"], request.form["password"]))
             info(results)
 
             # login successful

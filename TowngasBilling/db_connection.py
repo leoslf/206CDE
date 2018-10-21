@@ -16,7 +16,7 @@ def database_connection(autocommit=True):
         conn = cx_Oracle.connect(**credential)
         conn.autocommit = autocommit
     except Exception as e:
-        error("Cannot connect to database", e.message, e.args)
+        error("Cannot connect to database", str(e), str(e.args))
     return conn
 
 def db_version():
@@ -80,6 +80,11 @@ def query(table,
     else:
         conn = connection
 
+    if conn is None:
+        if isinstance(err_msg, list):
+            err_msg.append("conn is None, Cannot get database connection")
+        return None
+
     try:
         with conn.cursor() as cursor:
             cursor.execute(sql)
@@ -101,7 +106,8 @@ def query(table,
             err_msg.append(msg)
     finally:
         if connection is None:
-            conn.close()
+            if conn is not None:
+                conn.close()
 
     return None
 

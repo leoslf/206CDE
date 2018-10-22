@@ -67,9 +67,9 @@ def query(table,
         columns = ", ".join(map(str, columns))
 
     sql = "SELECT %s FROM %s" % (columns, table) \
-            + (" ORDER BY " + str(orderby) if orderby is not None else "") \
+            + (" " + str(join) if join != "" else "") \
             + (" WHERE " + str(condition) if condition != "" else "") \
-            + (" " + str(join) if join != "" else "")
+            + (" ORDER BY " + str(orderby) if orderby is not None else "")
 
     debug(sql)
     if isinstance(filters, dict):

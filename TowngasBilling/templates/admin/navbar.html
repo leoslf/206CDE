@@ -1,4 +1,4 @@
-{% set results = query("navigation", orderby="position", filter=dict(bar="cms")) %}
+{% set results = query("navigation", orderby="position", condition = "bar = 'cms'") %}
 
 {% if results is not none %}
     <nav class="navbar navbar-default sidebar" role="navigation" id="cms_navbar">

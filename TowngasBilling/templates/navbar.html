@@ -1,6 +1,9 @@
+<!-- 
+    vim: ft=htmldjango
+-->
 {% from 'macros.html' import error %}
 {% set msg = [] %}
-{% set results = query("navigation", orderby="position", filter=dict(bar="shared"), err_msg=msg) %}
+{% set results = query("navigation", orderby="position", condition="bar = 'shared' ", err_msg=msg) %}
 
 
 {% if results is not none %}
@@ -25,10 +28,11 @@
                     {% endfor %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    {% if 'username' in session and 'displayed_username' in session %}
+                    {% if 'username' in session and 'display_name' in session %}
+                        {# Logged in #}
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                <span class="glyphicon glyphicon-user"></span> {{ str(session['displayed_username']) }} <span class="caret"></span>
+                                <span class="glyphicon glyphicon-user"></span> {{ str(session['display_name']) }} <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu">
                                 <!--
@@ -36,7 +40,7 @@
                                 -->
                                 {% set msg = [] %}
                                 {% if g.authentication(err_msg=msg) %}
-                                    <li><a href="/admin">Admin</a></li>
+                                    <li><a href="/admin"><span class="glyphicon glyphicon-book"></span> Admin Panel</a></li>
                                 {% else %}
                                     {% if msg | length > 0 %}
                                         <script>
@@ -45,12 +49,15 @@
                                         </script>
                                     {% endif %}
                                 {% endif %}
+                                <li><a href="/settings"><span class="glyphicon glyphicon-wrench"></span> Settings</a></li>
                                 <li role="separator" class="divider"></li>
-                                <li><a href="/logout">Logout</a></li>
+                                <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                             </ul>
                         </li>
                     {% else %}
+                        {# Before Logged in #}
                         <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                        <li><a href="/register"><span class="glyphicon glyphicon-plus"></span> Register</a></li>
                     {% endif %}
                 </ul>
             </div> <!-- .navbar-collapse -->

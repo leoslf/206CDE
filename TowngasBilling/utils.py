@@ -18,14 +18,14 @@ def rootpath(path=""):
     return os.path.dirname(os.path.abspath(__file__)) + "/" + path
 
 def logged_in():
-    return all(x in session for x in ("username", "displayed_username"))
+    return all(x in session for x in ("username", "display_name"))
 
 def authentication(err_msg=None):
     if logged_in():
         try:
             # 2 == manager, 3 == admin
             msg = []
-            print (session["username"])
+            debug("authentication, session[\"username\"]: ", session["username"])
             results = query("login", condition="username = '%s' AND role >= 2" % session["username"], err_msg=msg)
             # info("results: ", results)
             if results is None:
@@ -42,19 +42,20 @@ def authentication(err_msg=None):
             if len(results) == 1:
                 # successful
                 return True
-            if err_msg is not None:
+
+            if isinstance(err_msg, list):
                 err_msg.append("Permission Denied")
 
-        except:
-            tb = traceback.format_exc()
-            error("authentication Exception: in query, username: %s : " % (session["username"] + str(tb)))
-            if err_msg is not None:
-                assert (isinstance(err_msg, list))
-                err_msg.append(tb)
-                debug(tb)
+        except Exception as e:
+            msg = "authentication Exception: in query, username: %s, %s" % (session["username"], str(e))
+            error(msg)
+            if isinstance(err_msg, list):
+                err_msg.append(msg)
+        finally:
+            debug("err_msg: '%r'" % err_msg)
     else:
-        err_msg.append("not logged in")
-
+        if isinstance(err_msg, list):
+            err_msg.append("not logged in")
     
     return False
 
@@ -66,9 +67,11 @@ def OrderedDict_column(od, col, nonempty_filter=False):
 
 def set_msg(msg_dict, page, f=render_template):
     resp = make_response(f(urlparse(str(page)).path))
-    assert (isinstance(msg_dict, dict))
-    for key in msg_dict:
-        resp.set_cookie(key + "msg", msg_dict[key])
+    if isinstance(msg_dict, dict):
+        for key in msg_dict:
+            resp.set_cookie(key + "msg", msg_dict[key])
+    else:
+        resp.set_cookie("errmsg", "set_msg failed!, isinstance(msg_dict, dict) == False: '%r'" % msg_dict)
     return resp
 
 def errmsg(msg, page="error.html", f=render_template):

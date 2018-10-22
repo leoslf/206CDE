@@ -8,15 +8,17 @@ function dump_msg() {
             set_cookie(e, "", 0);
         }
     });
-
-    /*
-    for (var i = 0; i < msgType.length; ++i)
-        if (msgType[i] in cookies && cookies[msgType[i]].length > 0) {
-            $("#" + msgType[i]).removeClass("hidden")
-                      .append(cookies[msgType[i]]);
-            set_cookie(msgType[i], "", 0);
+    const id_existances = msgType.map(type => $("#" + type).length > 0);
+    // if all(id does not exist)
+    // by (not even some if the id exists)
+    if (!id_existances.some(id_exist => id_exist === true)) {
+        for (var key in cookies) {
+            if (cookies[key].length > 0) {
+                alert(key + ": " + cookies[key]);
+            }
         }
-    */
+    }
+
 }
 
 window.addEventListener("load", dump_msg, false);

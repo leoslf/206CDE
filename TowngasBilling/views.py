@@ -121,15 +121,21 @@ def login():
 
     if request.method == "POST":
         # login form submitted
+        try:
+            username, password = (request.form[key] for key in ("username", "password"))
+        except Exception as e:
+            return errmsg(str(e), request.referrer)
+
         result = None
         try:
-            results = query("login", "username", "username='%s' AND password='%s'" % (request.form["username"], request.form["password"]))
-            info(results)
+            results = query("login l", "l.username, c.id AS customer_id, (c.given_name || ' ' || c.last_name) AS display_name", condition="username = '%s' AND password = '%s'" % (username, password), join="LEFT OUTER JOIN customer c ON c.id = l.customer_id")
+            info("login query results: '%r'" % results)
 
             # login successful
             if len(results) == 1: 
-                session["username"] = request.form["username"]
-                session["displayed_username"] = request.form["username"]
+                results = results[0]
+                session["username"] = username
+                session["display_name"] = username if results["customer_id"] is None else results["display_name"]
                 return redirect(request.referrer)
 
             if len(results) == 0:
@@ -152,9 +158,12 @@ def login():
 @application.route("/logout")
 def logout():
     # remove cookie variable
-    for x in ("username", "displayed_username"):
-        session.pop(x, None)
-    return set_msg(dict(info="raised error"), request.referrer, redirect)
+    try:
+        for x in ("username", "display_name"):
+            session.pop(x, None)
+        return redirect("/")
+    except Exception as e:
+        return errmsg("Exception: " + str(e), request.referrer, redirect)
 
 @application.route("/raise_error", methods=["POST"])
 def raise_error():

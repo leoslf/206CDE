@@ -2,7 +2,7 @@
 {% extends 'admin/base.html' %}
 {% block article %}
     {% if bar is defined %}
-        {{ table(header, "navigation", filter=dict(bar=bar)) }} 
+        {{ table(header, "navigation", condition = "bar = '" + bar + "'") }} 
     {% else %}
         {{ error("which bar of navigation is not defined") }}
     {% endif %}

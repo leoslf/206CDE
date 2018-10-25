@@ -13,6 +13,7 @@ function check_exists($el) {
     values[$el.data("column")] = $el.val();
     console.log("values: " + JSON.stringify(values));
     $.ajax({
+        type: 'POST',
         url: "/check_for_record",
         dataType: 'json',
         async: false,

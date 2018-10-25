@@ -25,14 +25,17 @@ def display(filename):
     except TemplateNotFound:
         return application.send_static_file(filename)
 
-@application.route("/check_for_record")
+@application.route("/check_for_record", methods = ["POST"])
 def check_for_record():
     # TODO: find work around to enhance security
     # if not logged_in():
     #     return jsonify(result=False)
 
-    table = request.args.get("table")
-    values_json = request.args.get("values")
+    # table = request.args.get("table")
+    # values_json = request.args.get("values")
+
+    table = request.form["table"]
+    values_json = request.form["values"]
     values = json.loads(values_json)
 
     results = query(table, condition = " AND ".join(["%s = '%s'" % (key, values[key]) for key in values]))

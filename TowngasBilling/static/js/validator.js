@@ -90,14 +90,10 @@ function check_exists($el) {
     focus: true,
     custom: {
         hkid: function ($el) {
-            console.log("checking hkid");
-            var exists = check_exists($el);
-            console.log("hkid exists:" + exists);
-
             if (!validid.hkid($el.val())) {
                 return "Invalid HKID;"
             }
-            if (exists) {
+            if (check_exists($el)) {
                 return "HKID already exists";
             }
         },

@@ -71,6 +71,7 @@
 
 
 {% macro table(header_text, table, ro=false) -%}
+    {# TODO: if 'orderby' in kwargs then move caret to that column #}
     <div class="row">
         <div class="container-fluid">
             <div class="page-header">

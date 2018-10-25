@@ -25,7 +25,7 @@ def authentication(err_msg=None):
         try:
             # 2 == manager, 3 == admin
             msg = []
-            debug("authentication, session[\"username\"]: ", session["username"])
+            debug("authentication, session[\"username\"]: %s" % session["username"])
             results = query("login", condition="username = '%s' AND role >= 2" % session["username"], err_msg=msg)
             # info("results: ", results)
             if results is None:

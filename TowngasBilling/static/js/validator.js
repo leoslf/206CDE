@@ -82,7 +82,8 @@ function check_exists($el) {
   Validator.FOCUS_OFFSET = 20
 
   Validator.DEFAULTS = {
-    delay: 500,
+    // delay: 500,
+    delay: 1000000,
     html: false,
     disable: true,
     focus: true,

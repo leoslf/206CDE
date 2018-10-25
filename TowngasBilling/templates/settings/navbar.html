@@ -1,0 +1,39 @@
+<!--
+    vim: ft=htmldjango
+-->
+{% set msg = [] %}
+{% set results = query("navigation", orderby="position", condition = "bar = 'settings'", err_msg=msg) %}
+
+{% if results is not none %}
+    <nav class="navbar navbar-default sidebar" role="navigation" id="settings_navbar">
+        <!-- Sidebar Header -->
+        <div class="navbar-header">
+            <button type="button" class="pull-left navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="collapse navbar-collapse sidebar-collapse">
+            <ul class="nav nav-stacked">
+                <li class="text-center"> 
+                    <a href="."><strong>Settings</strong></a>
+                </li>
+                <li class="divider"></li>
+                {% for item in results %}
+                <li>
+                    <a href="{{ item['href'] }}">{{ item['caption'] }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </nav>
+{% else %}
+    {% if msg | length > 0 %}
+        {{ macros.error("Exception: " + str(msg[0])) }}
+    {% else %}
+        {{ macros.error("results is None") }}
+    {% endif %}
+{% endif %}
+

@@ -145,12 +145,15 @@ def insert(table,
 
     try:
         with conn.cursor() as cursor:
-            cursor.execute(sql)
-            conn.commit()
-            return cursor.lastrowid
+            new_id_var = cursor.var(cx_Oracle.NUMBER)
+            cursor.execute(sql  + " returning id into :new_id", {"new_id": new_id_var})
+            new_id  = new_id_var.getvalue()[0]
+            debug("new_id: '%r'" % new_id)
+            return new_id
 
     except Exception as e:
-        msg = "Exception: errno %r, %r" % (e.args[0], e)
+        msg = "Exception: %s" % str(e)
+        exception(e)
         if isinstance(err_msg, list):
             err_msg.append(msg)
     finally:

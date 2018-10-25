@@ -25,14 +25,11 @@ def display(filename):
     except TemplateNotFound:
         return application.send_static_file(filename)
 
-@application.route("/settings")
-def settings():
-    return render_template("settings.html")
-
 @application.route("/check_for_record")
 def check_for_record():
-    if not logged_in():
-        return jsonify(result=False)
+    # TODO: find work around to enhance security
+    # if not logged_in():
+    #     return jsonify(result=False)
 
     table = request.args.get("table")
     values_json = request.args.get("values")
@@ -206,7 +203,7 @@ def update_table():
                     msg["info"] += "insert: %s, %s" % (str(name), str(delta_dict)) + "<br />"
                     rc = insert(table_name,
                                 values = delta_dict,
-                                errmsg = err_msg)
+                                err_msg = err_msg)
                     if rc < 0:
                         msg["err"] += "update failed, delta_dict: %r" % delta_dict + "<br />" \
                                         + err_msg[0] + "<br />"
@@ -223,7 +220,7 @@ def update_table():
             # application.logger.error("Exception in login: " + str(e))
             exception_msg = str(e)
             msg["err"] += exception_msg
-            error(exception_msg)
+            exception(exception_msg)
 
         return set_msg(msg, request.referrer, redirect)
     return redirect(request.referrer)

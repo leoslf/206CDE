@@ -8,5 +8,22 @@ function navbar_active() {
     });
 }
 
+$("#account_list > li > a").click(function () {
+    var account_id = $(this).attr("account_id"),
+        self = this;
+    $.post("/use_account", {
+            account_id: account_id
+        },
+        function (data) {
+            console.log("POST /use_account with account_id = " + account_id + "\n" + JSON.stringify(data));
+            $(".selected_account").each(function () {
+                $(this).removeClass("selected_account");
+                console.log(this);
+            });
+            $(self).addClass("selected_account");
+            console.log(self);
+        });
+});
+
 window.addEventListener("load", navbar_active, false);
 

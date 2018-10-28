@@ -111,3 +111,12 @@ table {
 .navbar_margin_adjust {
     margin-top: 70px;
 }
+
+.selected_account {
+    font-weight: bold;
+}
+
+.selected_account::after {
+    content: "*";
+}
+

@@ -3,10 +3,25 @@
 -->
 {% from 'macros.html' import error %}
 {% set msg = [] %}
-{% set results = query("navigation", orderby="position", condition="bar = 'shared' ", err_msg=msg) %}
+{% set navigations = query("navigation", orderby="position", condition="bar = 'shared' ", err_msg=msg) %}
+
+{% set account_query_condition = [] %}
+{% if g.authentication() %}
+    {% do account_query_condition.append("1 = 1") %}
+{% endif %}
+{% if 'Customer_id' in session %}
+    {% do account_query_condition.append("Customer_id = {{ str(session['Customer_id']) }}") %}
+{% endif %}
+
+{% if account_query_condition | length > 0 %}
+    {% set accounts = query("account", condition=(account_query_condition | join(' OR ')), err_msg=msg) %}
+{% else %}
+    {% do msg.append("account_query_condition | length == 0: neither administrator nor login with proper customer_id") %}
+{% endif %}
 
 
-{% if results is not none %}
+
+{% if navigations is not none %}
     <nav class="navbar navbar-default navbar-fixed-top" id="shared_navbar">
         <div class="container">
             <!-- Grouping Brand and Toggle => better mobile display -->
@@ -23,35 +38,42 @@
             </div>
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
-                    {% for item in results %}
-                        <li><a href="/{{ item['href'] }}">{{ item['caption'] }}</a></li>
+                    {% for navigation in navigations %}
+                        <li><a href="/{{ navigation['href'] }}">{{ navigation['caption'] }}</a></li>
                     {% endfor %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if 'username' in session and 'display_name' in session %}
                         {# Logged in #}
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-hover="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="glyphicon glyphicon-user"></span> {{ str(session['display_name']) }} <span class="caret"></span>
                             </a>
-                            <ul class="dropdown-menu">
-                                <!--
-                                <li><a href="/settings">Settings</a></li>
-                                -->
-                                {% set msg = [] %}
+                            <ul class="dropdown-menu scrollable-menu">
                                 {% if g.authentication(err_msg=msg) %}
-                                    <li><a href="/admin"><span class="glyphicon glyphicon-book"></span> Admin Panel</a></li>
-                                {% else %}
-                                    {% if msg | length > 0 %}
-                                        <script>
-                                            alert("check console log");
-                                            console.log(`{{ msg[0] }}`);
-                                        </script>
-                                    {% endif %}
+                                    <li><a href="/admin">Admin Panel <span class="glyphicon glyphicon-book"></span></a></li>
                                 {% endif %}
-                                <li><a href="/settings"><span class="glyphicon glyphicon-wrench"></span> Settings</a></li>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" data-hover="dropdown" aria-expanded="false">Account <b class="caret"></b></a>
+                                    <ul class="dropdown-menu" id="account_list">
+                                        {% if accounts is not none %}
+                                            {% for account in accounts %}
+                                                {% if 'account_id' in session and account['id'] == session['account_id'] %}
+                                                    <li><a href="#" account_id="{{ str(account['id']) }}" class="selected_account"> {{ str(account['id']) }}</a></li>
+                                                {% else %}
+                                                    <li><a href="#" account_id="{{ str(account['id']) }}"> {{ str(account['id']) }}</a></li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            <script>
+                                                alert("accounts is none");
+                                            </script>
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                                <li><a href="/settings">Settings <span class="glyphicon glyphicon-wrench"></span></a></li>
                                 <li role="separator" class="divider"></li>
-                                <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                                <li><a href="/logout">Logout <span class="glyphicon glyphicon-log-out"></span></a></li>
                             </ul>
                         </li>
                     {% else %}
@@ -65,6 +87,10 @@
     </nav>
     <script src="/navbar.js"></script>
 {% else %}
-    {{ error(msg[0]) }}
+    {% if msg | length > 0 %}
+        {{ error(msg | join("\n")) }}
+    {% else %}
+        {{ error("navigation is none but msg | length == 0") }}
+    {% endif %}
 {% endif %}
 

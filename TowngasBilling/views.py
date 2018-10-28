@@ -136,6 +136,17 @@ def login():
                 results = results[0]
                 session["username"] = username
                 session["display_name"] = username if results["customer_id"] is None else results["display_name"]
+                if results["customer_id"] is not None:
+                    session["customer_id"] = results["customer_id"]
+                    try:
+                        accounts = query("account", condition = "customer_id = " + str(results["customer_id"]))
+                        if len(accounts) > 0:
+                            session["account_id"] = accounts[0]["id"]
+                    except:
+                        tb = traceback.format_exc()
+                        application.logger.error("Exception in account query: " + str(tb))
+                        msg = "Exception occured during account query: " + str(tb)
+                        return errmsg(msg, request.referrer)
                 return redirect(request.referrer)
 
             if len(results) == 0:
@@ -171,6 +182,15 @@ def raise_error():
         assert ("msg" in request.form)
         error(request.form["msg"])
         return set_msg(dict(info="fired errmsg: %s" % request.form["msg"]), request.referrer, redirect)
+
+@application.route("/use_account", methods=["POST"])
+def use_account():
+    if request.method == "POST":
+        if "account_id" in request.form:
+            session["account_id"] = int(request.form["account_id"])
+            return jsonify(successful=True)
+        error("account_id not in request.form")
+        return jsonify(successful=False, msg="account_id not in request.form")
 
 @application.route("/update_table", methods=["POST", "GET"])
 def update_table():

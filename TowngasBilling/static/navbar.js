@@ -25,5 +25,22 @@ $("#account_list > li > a").click(function () {
         });
 });
 
+$("#customer_list > li > a").click(function () {
+    var customer_id = $(this).attr("customer_id"),
+        self = this;
+    $.post("/use_customer_id", {
+            customer_id: customer_id
+        },
+        function (data) {
+            console.log("POST /use_customer_id with customer_id = " + customer_id + "\n" + JSON.stringify(data));
+            $(".selected_customer").each(function () {
+                $(this).removeClass("selected_customer");
+                console.log(this);
+            });
+            $(self).addClass("selected_customer");
+            console.log(self);
+        });
+});
+
 window.addEventListener("load", navbar_active, false);
 

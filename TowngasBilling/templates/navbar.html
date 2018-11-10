@@ -3,15 +3,17 @@
 -->
 {% from 'macros.html' import error %}
 {% set msg = [] %}
+{% set customer_msg = [] %}
 {% set navigations = query("navigation", orderby="position", condition="bar = 'shared' ", err_msg=msg) %}
 
 {% set account_query_condition = [] %}
 {% if g.authentication() %}
     {% do account_query_condition.append("1 = 1") %}
 {% endif %}
-{% if 'Customer_id' in session %}
-    {% do account_query_condition.append("Customer_id = {{ str(session['Customer_id']) }}") %}
+{% if 'customer_id' in session %}
+    {% do account_query_condition.append("customer_id = " + str(session['customer_id'])) %}
 {% endif %}
+{% set customers = query("Customer", err_msg=msg) %}
 
 {% if account_query_condition | length > 0 %}
     {% set accounts = query("account", condition=(account_query_condition | join(' OR ')), err_msg=msg) %}
@@ -49,13 +51,31 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-hover="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="glyphicon glyphicon-user"></span> {{ str(session['display_name']) }} <span class="caret"></span>
                             </a>
-                            <ul class="dropdown-menu scrollable-menu">
+                            <ul class="dropdown-menu">
                                 {% if g.authentication(err_msg=msg) %}
                                     <li><a href="/admin">Admin Panel <span class="glyphicon glyphicon-book"></span></a></li>
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" data-hover="dropdown" aria-expanded="false">Customer <b class="caret"></b></a>
+                                        <ul class="dropdown-menu scrollable-menu" id="customer_list">
+                                            {% if customers is not none %}
+                                                {% for customer in customers %}
+                                                    {% if 'customer_id' in session and customer['id'] == session['customer_id'] %}
+                                                        <li><a href="#" customer_id="{{ str(customer['id']) }}" class="selected_customer"> {{ str(customer['id']) }}</a></li>
+                                                    {% else %}
+                                                        <li><a href="#" customer_id="{{ str(customer['id']) }}"> {{ str(customer['id']) }}</a></li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% else %}
+                                                <script>
+                                                    alert("customers is none");
+                                                </script>
+                                            {% endif %}
+                                        </ul>
+                                    </li>
                                 {% endif %}
                                 <li class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" data-hover="dropdown" aria-expanded="false">Account <b class="caret"></b></a>
-                                    <ul class="dropdown-menu" id="account_list">
+                                    <ul class="dropdown-menu scrollable-menu" id="account_list">
                                         {% if accounts is not none %}
                                             {% for account in accounts %}
                                                 {% if 'account_id' in session and account['id'] == session['account_id'] %}

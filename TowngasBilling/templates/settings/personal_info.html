@@ -1,0 +1,57 @@
+{% extends 'settings/base.html' %}
+
+{% set customer = none %}
+
+{% if "customer_id" in session %}
+    {% set customers = query("Customer", condition = "id = "+ str(session['customer_id'])) %}
+    {% if customers is not none and customers | length > 0 %}
+        {% set customer = customers[0] %}
+    {% endif %}
+{% endif %}
+
+
+{% block title %}
+    Personal Information
+{% endblock %}
+
+{% block article %}
+    <h1>Personal Information</h1>
+
+    <form role="form" data-toggle="validator" method="post" action="update_personal_info">
+        {% if customer is not none %}
+            <div class="form-group">
+                <label class="control-label">Name</label>
+                <div class="row">
+                    <div class="form-group col-sm-6">
+                        <input type="text" class="form-control" name="given_name" value="{{ customer['given_name'] }}" required readonly />
+                    </div>
+                    <div class="form-group col-sm-6">
+                        <input type="text" class="form-control" name="last_name" value="{{ customer['last_name'] }}" required readonly />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label">HKID</label>
+                <div class="row">
+                    <div class="form-group col-sm-6">
+                        <input type="text" class="form-control" name="HKID" value="{{ customer['hkid'] }}" required readonly />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Email</label>
+                <div class="row">
+                    <div class="form-group col-sm-6">
+                        <input type="text" class="form-control" name="Email" value="{{ customer['email'] }}" required />
+                    </div>
+                </div>
+            </div>
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-success">Submit</button>
+        {% endif %}
+    </form>
+    <script src="/js/validator.js"></script>
+    <script>
+        $.fn.validator.Constructor.INPUT_SELECTOR = ':input:not([type="hidden"], [type="submit"], [type="reset"], button)';
+    </script>
+{% endblock %}

@@ -120,3 +120,7 @@ table {
     content: "*";
 }
 
+.scrollable-menu {
+    height: 200px;
+    overflow: scroll;
+}

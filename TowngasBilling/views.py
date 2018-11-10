@@ -192,6 +192,20 @@ def use_account():
         error("account_id not in request.form")
         return jsonify(successful=False, msg="account_id not in request.form")
 
+@application.route("/use_customer_id", methods=["POST"])
+def use_customer_id():
+    if request.method == "POST":
+        if "customer_id" in request.form:
+            value = int(request.form["customer_id"])
+            if value == -1:
+                session.pop("customer_id")
+            else:
+                session["customer_id"] = value 
+            return jsonify(successful=True)
+        error("customer_id not in request.form")
+        return jsonify(successful=False, msg="customer_id not in request.form")
+
+
 @application.route("/update_table", methods=["POST", "GET"])
 def update_table():
     if request.method == "POST":

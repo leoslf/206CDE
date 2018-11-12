@@ -7,3 +7,383 @@
 {% else %}
     Please first select account.
 {% endif %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>A simple, clean, and responsive HTML invoice template</title>
+    <style type="text/css">
+    table {
+        width: 100%;
+        line-height: inherit;
+        border-spacing: 0px;
+    }
+
+    table tr,
+    table tr td {
+        padding: 5px;
+    }
+
+    .invoice-box {
+        max-width: 800px;
+        margin: auto;
+        padding: 30px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+        font-size: 16px;
+        line-height: 24px;
+        font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+        color: #555;
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    .invoice-box table tr {
+        padding-bottom: 20px;
+    }
+
+    .invoice-box table tr.top table td.title {
+        font-size: 45px;
+        line-height: 45px;
+        color: #333;
+    }
+
+    .invoice-box table tr.information table td {
+        padding-bottom: 40px;
+    }
+
+    .invoice-box table tr.heading td {
+        background: #eee;
+        border-bottom: 1px solid #ddd;
+        font-weight: bold;
+    }
+
+    .invoice-box table tr.details td {
+        padding-bottom: 20px;
+    }
+
+    .invoice-box table tr.item td {
+        border-bottom: 1px solid #eee;
+    }
+
+    .invoice-box table tr.item.last td {
+        border-bottom: none;
+    }
+
+    .invoice-box table tr.total td:nth-child(2) {
+        border-top: 2px solid #eee;
+        font-weight: bold;
+    }
+
+    @media only screen and (max-width: 600px) {
+        .invoice-box table tr.top table td {
+            width: 100%;
+            display: block;
+            text-align: center;
+        }
+
+        .invoice-box table tr.information table td {
+            width: 100%;
+            display: block;
+            text-align: center;
+        }
+    }
+
+    .billing-empty tr {
+        height: 50px;
+    }
+
+    .billing-table tr:first-child td:last-child {
+        width: 15%;
+    }
+
+    .billing-table tr:first-child td,
+    .billing-table tr:nth-child(2) td {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .billing-table tr:nth-child(n+3) td:last-child {
+        text-align: right;
+    }
+
+
+    .billing-table tr:last-child td:last-child,
+    .billing-table tr:nth-last-child(2) td:last-child {
+        font-weight: bold;
+        font-style: italic;
+        text-decoration: underline;
+    }
+
+    tr.bottom-information td table tr td {
+        padding: 10px;
+    }
+
+    /** RTL **/
+    .rtl {
+        direction: rtl;
+        font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+    }
+
+    .rtl table {
+        text-align: right;
+    }
+
+    .rtl table tr td:nth-child(2) {
+        text-align: left;
+    }
+
+
+    .r90 {
+        transform: rotate(90deg);
+    }
+
+
+
+    /**For the table border**/
+
+    .topleft {
+        border-top: 1px solid #000000;
+        border-left: 1px solid #000000;
+    }
+
+    .topright {
+        border-top: 1px solid #000000;
+        border-right: 1px solid #000000;
+    }
+
+    .bottomleft {
+        border-bottom: 1px solid #000000;
+        border-left: 1px solid #000000;
+    }
+
+    .bottomright {
+        border-bottom: 1px solid #000000;
+        border-right: 1px solid #000000;
+    }
+
+    .top {
+        border-top: 1px solid #000000;
+    }
+
+    .bottom {
+        border-bottom: 1px solid #000000;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="invoice-box">
+        <table>
+            <tr class="icon">
+                <td>
+                    <img src="https://www.cdf.gov.hk/tc/activities/images/towngas.jpg" style="width:100%; max-width:300px;">
+                </td>
+            </tr>
+            <tr class="personal-information">
+                <td>
+                    MR. DUMP ASS<br>
+                    99 Tat Che Road<br>
+                    Kowloon<br>
+                    HONG KONG
+                </td>
+                <td>
+                    Account Number: 1234-5678-90<br>
+                    Created Date: 09 JAN 2018<br>
+                </td>
+            </tr>
+            <tr class="heading">
+                <td>
+                    Bill Information
+                </td>
+                <td width="50%">
+                    Billing date: 10 JAN 2018
+                </td>
+            </tr>
+            <tr class="billing">
+                <td colspan="6">
+                    <table>
+                        <tr>
+                            <td>
+                                <table class="billing-table">
+                                    <tr>
+                                        <td class="topleft">From 10 DEC 2017</td>
+                                        <td class="top bottom" rowspan=2>to</td>
+                                        <td class="top">10 JAN 2017</td>
+                                        <td class="topleft bottomright">1 unit = 48MJ</td>
+                                        <td class="topright">Comsumption(MJ)</td>
+                                        <td rowspan="6">Last Month</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bottomleft">168 Estimate</td>
+                                        <td class="bottom">180 Estimate</td>
+                                        <td class="bottomleft bottomright">12 units x 48</td>
+                                        <td class="bottomright">576</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">
+                                            Standard gas charge
+                                        </td>
+                                        <td>
+                                            137.59
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">
+                                            Fuel cost adjustment(1.900 cents pert MJ)
+                                        </td>
+                                        <td>
+                                            10.94
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">
+                                            Monthly maintence charge
+                                        </td>
+                                        <td>
+                                            9.5
+                                        </td>
+                                    </tr>
+                                    <tr class="billing-table-end">
+                                        <td colspan="4">
+                                        </td>
+                                        <td>
+                                            158.03
+                                        </td>
+                                    </tr>
+                                </table><br><br>
+                                <table class="billing-table">
+                                    <tr>
+                                        <td class="topleft">From 10 JAN 2017</td>
+                                        <td class="top bottom" rowspan=2>to</td>
+                                        <td class="top">10 FEB 2017</td>
+                                        <td class="topleft bottomright">1 unit = 48MJ</td>
+                                        <td class="topright">Comsumption(MJ)</td>
+                                        <td rowspan="6">This Month</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bottomleft">180 Estimate</td>
+                                        <td class="bottom">193 Estimate</td>
+                                        <td class="bottomleft bottomright">13 units x 48</td>
+                                        <td class="bottomright">624</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">
+                                            Standard gas charge
+                                        </td>
+                                        <td>
+                                            149.01
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">
+                                            Fuel cost adjustment(1.960 cents pert MJ)
+                                        </td>
+                                        <td>
+                                            12.23
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">
+                                            Monthly maintence charge
+                                        </td>
+                                        <td>
+                                            9.5
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">
+                                        </td>
+                                        <td>
+                                            170.74
+                                        </td>
+                                    </tr>
+                                </table>
+                                <br><br>
+                                <table class="billing-table" border="0">
+                                    <tr>
+                                        <td colspan="2"></td>
+                                        <td rowspan="6"></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Spare parts S123456
+                                        </td>
+                                        <td>
+                                            45.00
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Hotplate Instalment(1st of 12)
+                                        </td>
+                                        <td>
+                                            83
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Other Charge
+                                        </td>
+                                        <td>
+                                            128
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total bill amount
+                                        </td>
+                                        <td>
+                                            170.74
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr class="heading">
+                <td colspan="6">
+                    Seld-reading by QR Code - Simple, Easy &amp; Quick: A new Self-reading method has been launched. SImply scan your gas bill's QR code, your account number will be displayed automatically. Entire the meter reading and submit.
+                </td>
+            </tr>
+            <tr class="empty-row">
+                <td></td>
+            </tr>
+            <tr class="bottom-information">
+                <td colspan="3">
+                    <table>
+                        <tr rowspan="2">
+                            <td>
+                                <img class="r90" src="https://cdn.pixabay.com/photo/2014/04/02/16/19/barcode-306926_960_720.png" height="50">
+                            </td>
+                            <td colspan="2">
+                                Please pay this bill by 22 FEB 2018, $457
+                            </td>
+                        </tr>
+                        <tr>
+                            <td rowspan="2"> <img src="https://www.myuberworks.com/media/wysiwyg/technology/icons_exp_01.png" height="75"></td>
+                            <td align="centre">
+                                account no
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <img  src="https://barcode.tec-it.com/barcode.ashx?data=https%3A%2F%2Fbarcode.tec-it.com%2Fen%2FCode128%3Fdata%3Dhttps%253A%252F%252Fbarcode.tec-it.com%252Fen&code=Code128&multiplebarcodes=false&translate-esc=false&unit=Fit&dpi=96&imagetype=Gif&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0" height="40px">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>BANNER</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>

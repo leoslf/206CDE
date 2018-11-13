@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% set title = "Accounts" %}
+
+{% set msg = [] %}
+
+{% set condition = ["1=1"] %}
+
+{% if 'customer_id' in session %}
+    {% do condition.append("customer_id  = " + str(session['customer_id'])) %}
+{% endif %}
+
+{% set accounts = query("account_address", condition=(condition | join (' OR ')), err_msg=msg) %}
+
+{% block content %}
+    {% if accounts is not none %}
+        <table class="table">
+            <thead>
+                <th>Account no.</th>
+                <th>Address</th>
+            </thead>
+            <tbody>
+            {% for account in accounts %}
+                <tr>
+                    <td>
+                    {% if 'account_id' in session and account['id'] == session['account_id'] %}
+                        <a href="#" account_id="{{ str(account['account_id']) }}" class="selected_account"> {{ str(account['account_id']) }}</a>
+                    {% else %}
+                        <a href="#" account_id="{{ str(account['account_id']) }}"> {{ str(account['account_id']) }}</a>
+                    {% endif %}
+                    </td>
+                    <td>
+                        {{ str(account['address']) }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <script>
+            alert("accounts is none");
+        </script>
+        <div>
+            {{ msg | join('')  }}
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,10 +1,10 @@
 class Config(object):
-    name = "205CDE_Project"
+    name = "206CDE_Project"
     DEBUG = False
     TESTING = False
     domain = "domain.com"
-    admin_email = "leosin.205CDE@gmail.com"
-    admin_email_pw = "205CDE.."
+    admin_email = "lfsin3-c@my.cityu.edu.hk"
+    admin_email_pw = "206CDE.."
 
 class ProductionConfig(Config):
     pass

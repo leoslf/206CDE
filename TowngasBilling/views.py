@@ -205,6 +205,21 @@ def use_customer_id():
         error("customer_id not in request.form")
         return jsonify(successful=False, msg="customer_id not in request.form")
 
+@application.route("/execute_sql", methods=["POST"])
+def execute_sql():
+    if request.method == "POST":
+        if "sql" in request.form:
+            results = OrderedDict()
+            with database_connection() as conn:
+                with conn.cursor as cursor:
+                    cursor.execute(request.form["sql"])
+                    for item in vars(cursor):
+                        results[item] = cursor[item]
+            return jsonify(successful=True, **results)
+
+        error("sql not found in request.form")
+        return jsonify(successful=False, msg="sql not in request.form")
+
 
 @application.route("/update_table", methods=["POST", "GET"])
 def update_table():

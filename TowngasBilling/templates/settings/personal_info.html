@@ -46,6 +46,29 @@
                     </div>
                 </div>
             </div>
+            <div class="form-group">
+                <label class="control-label">Password</label>
+                <div class="row">
+                    <div class="form-group col-sm-6">
+                        <input type="password" class="form-control" name="password" placeholder="Password to confirm personal information update" required />
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Change Password</label>
+                <div class="row">
+                    <div class="form-group col-sm-6">
+                        <input type="password" class="form-control" id="password" name="new_password" placeholder="New Password"/>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                    <div class="form-group col-sm-6">
+                        <input type="password" class="form-control" data-match="#password" data-match-error="Confirm must match password" placeholder="Confirm New Password" />
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Submit Button -->
             <button type="submit" class="btn btn-success">Submit</button>
         {% endif %}

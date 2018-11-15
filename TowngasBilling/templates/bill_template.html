@@ -98,17 +98,17 @@ vim: ft=htmldjango
 <body>
 {% if g.authentication() or is_bill_visible(request.args) %}
     {% set bill = query_bill(request.args) %}
+    {% set bill_date = request.args.get('date') | default('01-Dec-17', true)  %}
     {% if bill or g.authentication() %}
         {% if bill and bill | length > 0 %}
             {% set bill = bill[0] %}
             {% if g.authentication() %}
-            <script>
-                {% for attr in bill %}
-                    console.log("{{ attr }}: {{ bill[attr] }}");
-                {% endfor %}
-            </script>
+                <script>
+                    {% for attr in bill %}
+                        console.log("{{ attr }}: {{ bill[attr] }}");
+                    {% endfor %}
+                </script>
             {% endif %}
-            {% set bill_date = request.args.get('date') | default('01-Dec-17', true)  %}
             <page size="A4">
                 <div class="invoice-box">
                     <table>
@@ -127,7 +127,7 @@ vim: ft=htmldjango
                                 </td>
                                 <td>
                                     Account Number: {{ account_number_format(request.args.get('account_id') | default(0, true))  }}<br />
-                                    Created Date: {{ bill_date }}<br />
+                                    Created Date: {{ bill_date | datemath() }}<br />
                                 </td>
                             </tr>
                             <tr class="alert alert-info" role="info">
@@ -209,7 +209,7 @@ vim: ft=htmldjango
                                                     <img class="r90" src="https://cdn.pixabay.com/photo/2014/04/02/16/19/barcode-306926_960_720.png" height="50">
                                                 </td>
                                                 <td colspan="2">
-                                                    Please pay this bill by {{ bill_date | datemath(months=+1) }}, ${{ subtotals | sum | round(0) }}
+                                                    Please pay this bill by {{ bill_date | datemath(months=+1) }}, ${{ subtotals | sum | round(1) }}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -249,6 +249,11 @@ vim: ft=htmldjango
                     </table>
                 </div>
             </page>
+        {% else %}
+            <div class="alert alert-danger alert-dismissible">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                Failed to query bill
+            </div>
         {% endif %}
     {% else %}
         failed to query bill and not authenticated

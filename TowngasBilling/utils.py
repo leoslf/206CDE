@@ -101,10 +101,10 @@ def is_bill_visible(args):
 def query_bill(args):
     try:
         account_id, date = args['account_id'], args['date']
-        bills = query("Bill_view", condition = "account_id = %d AND bill_date <= TO_DATE('%s', 'YYYYMMDD')" % (account_id, date), limit=1)
+        bills = query("Bill_view", condition = "account_id = %s AND bill_date <= TO_DATE('%s', 'YYYYMMDD')" % (str(account_id), str(date)), limit=1)
         if bills is None or len(bills) < 1:
             raise ValueError
-        return bills[0]
+        return bills
     except KeyError as e:
         error(str(e))
         if authentication():

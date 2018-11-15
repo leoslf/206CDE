@@ -1,9 +1,12 @@
 import sys
 import os
+import inspect
 import traceback
 import json
-from smtpd import *
 import asyncore
+import datetime
+import flask
+
 try:
     from urlparse import urlparse
 except ImportError:
@@ -11,7 +14,10 @@ except ImportError:
 
 from flask import *
 
+from dateutil.relativedelta import *
+
 from TowngasBilling.db_connection import *
+
 
 # helper functions
 def rootpath(path=""):
@@ -77,20 +83,52 @@ def set_msg(msg_dict, page, f=render_template):
 def errmsg(msg, page="error.html", f=render_template):
     return set_msg({'err' : msg}, page, f)
 
-class SMTPDaemon(SMTPServer):
-    def __init__(self, localaddr, remoteaddr=(None, None)):
-        SMTPServer.__init__(self, localaddr, remoteaddr)
-    def process_message(self, peer, mailfrom, rcpttos, data):
-        info("New Email Recieved: %s" % data)
-
-    @staticmethod
-    def run(host="localhost", port=25):
-        daemon = SMTPDaemon((host, port))
-        try:
-            asyncore.loop(timeout=2)
-        except KeyboardInterrupt:
-            daemon.close()
-
 def account_number_format(account_number):
     s = "%010d" % int(account_number if account_number else 0)
     return "-".join(map(str, [s[i:i+4] for i in range(0, len(s), 4)]))
+
+def is_bill_visible(args):
+    if not logged_in():
+        return False
+    attributes = ('account_id', 'date')
+    if args is None or not all(attribute in args for attribute in attributes):
+        return False
+    accounts = query("Account", condition = "account_id = %d" % int(args["account_id"]))
+    if accounts is None and len(accounts) < 1:
+        return False
+    return True
+
+def query_bill(args):
+    try:
+        account_id, date = args['account_id'], args['date']
+        bills = query("Bill_view", condition = "account_id = %d AND bill_date <= TO_DATE('%s', 'YYYYMMDD')" % (account_id, date), limit=1)
+        if bills is None or len(bills) < 1:
+            raise ValueError
+        return bills[0]
+    except KeyError as e:
+        error(str(e))
+        if authentication():
+            return query("Account_view", condition = "Account_id = -1")
+        return None
+    except ValueError as e:
+        error(str(e))
+        return None
+
+def utils_export():
+    return { name: obj for name, obj in inspect.getmembers(sys.modules[__name__])
+                if (inspect.isfunction(obj) and name not in dir(flask)) }
+
+def datetimeformat(value, format='%H:%M / %d-%m-%Y'):
+    return value.strftime(format)
+
+def dateformat(value, format='%d-%b-%Y'):
+    return value.strftime(format)
+
+def datemath(value, **kwargs):
+    value = datetime.datetime.strptime(value, "%d-%b-%y")
+    print (value)
+    if len(kwargs) > 0:
+        print (str(kwargs))
+        value += relativedelta(**kwargs)
+    print (value)
+    return dateformat(value)

@@ -34,6 +34,7 @@ def query(table,
           filters=None,
           err_msg=None,
           connection=None,
+          limit=None,
           *argv,
           **kwargs):
     """Queries Result Set from Database
@@ -92,6 +93,15 @@ def query(table,
             debug("columns: '%r'" % columns)
 
             rows = list(_rows_generator(cursor, columns))
+            if limit:
+                try:
+                    limit = int(limit)
+                    if limit < 0:
+                        raise ValueError
+                    limit = min(limit, len(rows))
+                    rows = rows[:limit]
+                except ValueError as e:
+                    error(str(e))
 
             if description:
                 return OrderedDict([("rows", rows), ("description", cursor.description), ("columns", columns)])
@@ -101,7 +111,7 @@ def query(table,
     except Exception as e:
         tb = traceback.format_exc()
         msg = "Exception: '%s', %s" % (str(e), tb)
-        error("Exception in query(): ", e, tb)
+        error("Exception in query(): ", e, tb, sql)
         if isinstance(err_msg, list):
             err_msg.append(msg)
     finally:

@@ -4,4 +4,9 @@ Flask==1.0.2
 itsdangerous==0.24
 Jinja2==2.10
 MarkupSafe==1.0
+Pillow==5.3.0
+pyBarcode==0.7
+python-dateutil==2.7.5
+qrcode==6.0
+six==1.11.0
 Werkzeug==0.14.1

@@ -13,6 +13,7 @@ from flask import *
 from jinja2 import TemplateNotFound
 from TowngasBilling import app as application
 from TowngasBilling.utils import *
+import TowngasBilling.utils
 
 
 
@@ -313,5 +314,4 @@ def png_code39(content):
     response = make_response(gen_code39(content, **request.args))
     response.headers["Content-type"] = "image/png"
     return response
-
 

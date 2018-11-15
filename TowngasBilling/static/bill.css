@@ -100,11 +100,13 @@ div.invoice-box table tr:nth-child(3) td:last-child {
     text-align: right;
 }
 
+.billing-table tr:last-child td:last-child {
+    font-weight: bold;
+    font-style: italic;
+}
 
 .billing-table tr:last-child td:last-child,
 .billing-table tr:nth-last-child(2) td:last-child {
-    font-weight: bold;
-    font-style: italic;
     text-decoration: underline;
 }
 

@@ -35,7 +35,7 @@ vim: ft=htmldjango
                 <td>
                     {% if gas_charges and gas_charges | length > 0 %}
                         {% set gas_charge = gas_charges[0]['charge'] | round(2) %}
-                        {{ gas_charge }}
+                        {{ "%.02f" | format(gas_charge) }}
                     {% else %}
                         Failed to query gas_charge
                         
@@ -47,7 +47,7 @@ vim: ft=htmldjango
                     Fuel cost adjustment(1.900 cents pert MJ)
                 </td>
                 <td>
-                    {{ fuel_cost }}
+                    {{ "%.02f" | format(fuel_cost) }}
                 </td>
             </tr>
             <tr>
@@ -55,15 +55,15 @@ vim: ft=htmldjango
                     Monthly maintenance charge
                 </td>
                 <td>
-                    {{ maintenance_charge }}
+                    {{ "%.02f" | format(maintenance_charge) }}
                 </td>
             </tr>
-            {% set subtotal = gas_charge + fuel_cost + maintenance_charge %}
+            {% set subtotal = (gas_charge + fuel_cost + maintenance_charge) | round(2) %}
             <tr class="billing-table-end">
                 <td colspan="4">
                 </td>
                 <td>
-                    {{ subtotal }}
+                    {{ "%.02f" | format(subtotal) }}
                 </td>
             </tr>
         </tbody>
@@ -183,7 +183,7 @@ vim: ft=htmldjango
                                                         <td>Total bill amount
                                                         </td>
                                                         <td>
-                                                            {{ subtotals | sum }}
+                                                            {{ "%.02f" | format(subtotals | sum) }}
                                                         </td>
                                                     </tr>
                                                 </table>

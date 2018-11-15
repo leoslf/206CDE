@@ -186,6 +186,20 @@ vim: ft=htmldjango
                                                             {{ "%.02f" | format(subtotals | sum) }}
                                                         </td>
                                                     </tr>
+                                                    <tr>
+                                                        <td>Odd cents to be carried forward
+                                                        </td>
+                                                        <td>
+                                                            -{{ "%.02f" | format((subtotals | sum) - (subtotals | sum | round(0, 'floor'))) }}
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Amount due
+                                                        </td>
+                                                        <td>
+                                                            {{ "%.02f" | format(subtotals | sum | round(0, 'floor')) }}
+                                                        </td>
+                                                    </tr>
                                                 </table>
                                             </td>
                                         </tr>
@@ -209,7 +223,7 @@ vim: ft=htmldjango
                                                     <img class="r90" src="https://cdn.pixabay.com/photo/2014/04/02/16/19/barcode-306926_960_720.png" height="50">
                                                 </td>
                                                 <td colspan="2">
-                                                    Please pay this bill by {{ bill_date | datemath(months=+1) }}, ${{ subtotals | sum | round(1) }}
+                                                    Please pay this bill by {{ bill_date | datemath(months=+1) }}, ${{ "%.02f" | format(subtotals | sum | round(0, 'floor')) }}
                                                 </td>
                                             </tr>
                                             <tr>

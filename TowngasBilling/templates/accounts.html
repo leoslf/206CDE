@@ -4,7 +4,11 @@
 
 {% set msg = [] %}
 
-{% set condition = ["1=1"] %}
+{% set condition = [] %}
+
+{% if g.authentication() %}
+    {% do condition.append("1=1") %}
+{% endif %}
 
 {% if 'customer_id' in session %}
     {% do condition.append("customer_id  = " + str(session['customer_id'])) %}

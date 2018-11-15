@@ -4,10 +4,17 @@ import sys
 import os
 import traceback
 import json
+
+from io import BytesIO
+import barcode
+import qrcode
+
 from flask import *
 from jinja2 import TemplateNotFound
 from TowngasBilling import app as application
 from TowngasBilling.utils import *
+
+
 
 @application.before_request
 def before_request():
@@ -276,3 +283,35 @@ def update_table():
 
         return set_msg(msg, request.referrer, redirect)
     return redirect(request.referrer)
+
+
+def gen_code39(content, **kwargs):
+    fp = BytesIO()
+    makepng = barcode.writer.ImageWriter()
+    writer_options = {
+            "write_text": False,
+            "module_height": 7.5,
+            "quiet_zone": 1.5,
+        }
+    writer_options.update(**kwargs)
+    debug(writer_options)
+    # https://pythonhosted.org/pyBarcode/writers/index.html#common-writer-options
+    barcode.generate(
+        'code39',
+        content,
+        output=fp,
+        writer=makepng,
+        add_checksum=False,
+        writer_options=writer_options,
+    )
+    image = fp.getvalue()
+    fp.close()
+    return image
+
+@application.route("/code39/<content>")
+def png_code39(content):
+    response = make_response(gen_code39(content, **request.args))
+    response.headers["Content-type"] = "image/png"
+    return response
+
+

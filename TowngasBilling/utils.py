@@ -90,3 +90,7 @@ class SMTPDaemon(SMTPServer):
             asyncore.loop(timeout=2)
         except KeyboardInterrupt:
             daemon.close()
+
+def account_number_format(account_number):
+    s = "%010d" % int(account_number if account_number else 0)
+    return "-".join(map(str, [s[i:i+4] for i in range(0, len(s), 4)]))

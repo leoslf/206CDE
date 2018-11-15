@@ -1,0 +1,179 @@
+
+.invoice-box {
+    max-width: inherit;
+    margin: auto;
+    padding: 30px;
+    /* box-shadow: 0 0 10px rgba(0, 0, 0, .15); */
+    font-size: 12px;
+    line-height: 15px;
+    font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+    color: #555;
+    text-align: left;
+    vertical-align: middle;
+}
+
+table,
+tbody {
+    width: 100%;
+    line-height: inherit;
+    border-spacing: 0px;
+}
+
+.invoice-box table tr,
+.invoice-box table tr td {
+    padding: 5px;
+}
+
+
+.invoice-box table tr {
+    padding-bottom: 20px;
+}
+
+.invoice-box table tr.top table td.title {
+    font-size: 45px;
+    line-height: 45px;
+    color: #333;
+}
+
+.invoice-box table tr.information table td {
+    padding-bottom: 40px;
+}
+
+.invoice-box table tr.heading td {
+    background: #eee;
+    border-bottom: 1px solid #ddd;
+    font-weight: bold;
+}
+
+.invoice-box table tr.details td {
+    padding-bottom: 20px;
+}
+
+.invoice-box table tr.item td {
+    border-bottom: 1px solid #eee;
+}
+
+.invoice-box table tr.item.last td {
+    border-bottom: none;
+}
+
+.invoice-box table tr.total td:nth-child(2) {
+    border-top: 2px solid #eee;
+    font-weight: bold;
+}
+
+@media only screen and (max-width: 600px) {
+    .invoice-box table tr.top table td {
+        width: 100%;
+        display: block;
+        text-align: center;
+    }
+
+    .invoice-box table tr.information table td {
+        width: 100%;
+        display: block;
+        text-align: center;
+    }
+}
+
+.billing-empty tr {
+    height: 50px;
+}
+
+.billing-table tr:first-child td:last-child {
+    width: 15%;
+}
+
+.billing-table tr:first-child td,
+.billing-table tr:nth-child(2) td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+tr.personal-information td:nth-child(1) {
+    padding-left: 20mm;
+}
+
+.billing-table tr:nth-child(n+3) td:last-child,
+tr.personal-information td:last-child,
+div.invoice-box table tr:nth-child(3) td:last-child {
+    text-align: right;
+}
+
+
+.billing-table tr:last-child td:last-child,
+.billing-table tr:nth-last-child(2) td:last-child {
+    font-weight: bold;
+    font-style: italic;
+    text-decoration: underline;
+}
+
+tr.bottom-information td table tr td {
+    padding: 10px;
+}
+
+
+
+/** RTL **/
+.rtl {
+    direction: rtl;
+    font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+}
+
+.rtl table {
+    text-align: right;
+}
+
+.rtl table tr td:nth-child(2) {
+    text-align: left;
+}
+
+
+.r90 {
+    transform: rotate(90deg);
+}
+
+
+
+/**For the table border**/
+
+.topleft {
+    border-top: 1px solid #000000;
+    border-left: 1px solid #000000;
+}
+
+.topright {
+    border-top: 1px solid #000000;
+    border-right: 1px solid #000000;
+}
+
+.bottomleft {
+    border-bottom: 1px solid #000000;
+    border-left: 1px solid #000000;
+}
+
+.bottomright {
+    border-bottom: 1px solid #000000;
+    border-right: 1px solid #000000;
+}
+
+.top {
+    border-top: 1px solid #000000;
+}
+
+.bottom {
+    border-bottom: 1px solid #000000;
+}
+
+.icon {
+    /*
+     * 100% width is 100% of parent's width or the viewport
+    width: 100%;
+    max-width: 300px;
+    */
+}
+
+/* remove the margin of alert box from bootstrap */
+.alert {
+        margin-bottom: 0;
+}

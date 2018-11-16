@@ -1,5 +1,7 @@
 import sys
 import os
+from os.path import dirname, abspath
+
 import inspect
 import traceback
 import json
@@ -21,7 +23,7 @@ from TowngasBilling.db_connection import *
 
 # helper functions
 def rootpath(path=""):
-    return os.path.dirname(os.path.abspath(__file__)) + "/" + path
+    return abspath(dirname(abspath(__file__)) + "/" + path)
 
 def logged_in():
     return all(x in session for x in ("username", "display_name"))

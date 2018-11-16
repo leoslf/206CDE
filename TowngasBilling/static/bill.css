@@ -80,21 +80,18 @@ tbody {
     height: 50px;
 }
 
-.billing-table tr:first-child td:last-child {
+.billing-table tr:first-child td:nth-child(3),
+.right-row {
     width: 15%;
 }
 
-.billing-table tr:first-child td,
-.billing-table tr:nth-child(2) td {
-    vertical-align: middle;
-    text-align: center;
+.consumption-table tr:first-child td,
+.consumption-table tr:nth-child(2) td {
+    vertical-align: middle !important;
+    text-align: center !important;
 }
 
-tr.personal-information td:nth-child(1) {
-    padding-left: 20mm;
-}
-
-.billing-table tr:nth-child(n+3) td:last-child,
+.billing-table tr td:nth-child(2),
 tr.personal-information td:last-child,
 div.invoice-box table tr:nth-child(3) td:last-child {
     text-align: right;
@@ -103,6 +100,11 @@ div.invoice-box table tr:nth-child(3) td:last-child {
 .billing-table tr:last-child td:last-child {
     font-weight: bold;
     font-style: italic;
+}
+
+
+tr.personal-information td:first-child {
+    padding-left: 20mm;
 }
 
 .billing-table tr:last-child td:last-child,

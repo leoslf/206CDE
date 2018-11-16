@@ -12,7 +12,7 @@ vim: ft=htmldjango
     {% set gas_charges = query("dual", "monthly_charge('%s', %d) AS charge" | format(new['period_start']|dateformat, consumption_unit)) %}
     {% set fuel_cost = (consumption_MJ * 0.019) | round(2) %}
     {% set maintenance_charge = 9.5 %}
-    <table class="billing-table">
+    <table class="billing-table consumption-table">
         <tbody>
             <tr>
                 <td class="topleft">From {{ old['period_start']|dateformat }}</td>
@@ -135,7 +135,6 @@ vim: ft=htmldjango
                                     Bill Information
                                 </td>
                                 <td width="50%">
-                                    Billing date: 10 JAN 2018
                                 </td>
                             </tr>
                             <tr class="billing">
@@ -143,17 +142,49 @@ vim: ft=htmldjango
                                     <table>
                                         <tr>
                                             <td>
-                                                {{ bill_consumption(request.args.get('account_id') | default(-1, true), bill_date) }}
-                                                <br><br>
                                                 <table class="billing-table" border="0">
-                                                    <tr>
-                                                        <td colspan="2"></td>
-                                                        <td rowspan="6"></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td colspan="2"></td>
-                                                    </tr>
                                                     <!--
+                                                    <tr>
+                                                        <td colspan="2"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2"></td>
+                                                    </tr>
+                                                    -->
+                                                    <tr>
+                                                        <td>Previous Bill Amount
+                                                        </td>
+                                                        <td>
+                                                            ${{ "%.02f" | format(subtotals | sum) }}
+                                                        </td>
+                                                        <td class="right-row" rowspan="6"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Payment Recieved
+                                                        </td>
+                                                        <td>
+                                                            -{{ "%.02f" | format(subtotals | sum | round(0, 'floor')) }}
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Balance brought forward
+                                                        </td>
+                                                        <td>
+                                                            {{ "%.02f" | format((subtotals | sum) - (subtotals | sum | round(0, 'floor'))) }}
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                                <br />
+                                                {{ bill_consumption(request.args.get('account_id') | default(-1, true), bill_date) }}
+                                                <br /><br />
+                                                <table class="billing-table" border="0">
+                                                    <!--
+                                                    <tr>
+                                                        <td colspan="2"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2"></td>
+                                                    </tr>
                                                     <tr>
                                                         <td>
                                                             Spare parts S123456
@@ -185,6 +216,7 @@ vim: ft=htmldjango
                                                         <td>
                                                             {{ "%.02f" | format(subtotals | sum) }}
                                                         </td>
+                                                        <td class="right-row" rowspan="6"></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Odd cents to be carried forward
@@ -210,9 +242,6 @@ vim: ft=htmldjango
                                 <td colspan="6">
                                     Self-reading by QR Code - Simple, Easy &amp; Quick: A new Self-reading method has been launched. SImply scan your gas bill's QR code, your account number will be displayed automatically. Entire the meter reading and submit.
                                 </td>
-                            </tr>
-                            <tr class="empty-row">
-                                <td></td>
                             </tr>
                             <tr class="bottom-information">
                                 <td colspan="3">

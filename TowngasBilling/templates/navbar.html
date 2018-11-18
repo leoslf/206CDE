@@ -24,39 +24,52 @@
 
 
 {% if navigations is not none %}
-    <nav class="navbar navbar-default navbar-fixed-top" id="shared_navbar">
-        <div class="container">
-            <!-- Grouping Brand and Toggle => better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="/">
-                    <span><img alt="Brand" src="/images/logo.png" /></span> {{ g.app_name }}
-                </a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar">
-                <ul class="nav navbar-nav">
+
+<style>
+        .right-triangle {
+            float: right;
+        }
+        .dropdown-nested {
+            overflow-y: visible;
+        }
+        .dropdown-content .dropdown-content {
+            margin-left: 100%;
+        }
+    </style>
+
+
+
+<div class="navbar-fixed">
+    <nav class="  light-blue darken-1" id="shared_navbar container">
+        <div class="container nav-wrapper">            
+            <div class="navbar" id="navbar">
+                <!--Nav Item-->
+                <ul class="left">
                     {% for navigation in navigations %}
                         <li><a href="/{{ navigation['href'] }}">{{ navigation['caption'] }}</a></li>
                     {% endfor %}
                 </ul>
-                <ul class="nav navbar-nav navbar-right">
+                <!--Nav Account-->
+                <ul class="right">
                     {% if 'username' in session and 'display_name' in session %}
                         {# Logged in #}
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-hover="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="glyphicon glyphicon-user"></span> {{ str(session['display_name']) }} <span class="caret"></span>
+                        <li class="dropdown right">
+
+                            <a href="#" class="dropdown-button" data-activates="dropdown1" data-beloworigin="true" >
+                                <i class=" material-icons left">account_circle</i> &nbsp | &nbsp  {{ str(session['display_name']) }} <i class=" valign-wrapper material-icons right">arrow_drop_down</i>
                             </a>
-                            <ul class="dropdown-menu">
+                            <!--AccountDropdown-->
+                            <ul id="dropdown1"class="dropdown-content dropdown-nested"  >
                                 {% if g.authentication(err_msg=msg) %}
-                                    <li><a href="/admin">Admin Panel <span class="glyphicon glyphicon-book"></span></a></li>
+                                    <li><a href="/admin"> <i class="valign-wrapper large material-icons ">assignment</i>Admin Panel</a></li>
                                     <li class="dropdown">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" data-hover="dropdown" aria-expanded="false">Customer <b class="caret"></b></a>
-                                        <ul class="dropdown-menu scrollable-menu" id="customer_list">
+                                        <a class='dropdown-button' href='#' data-activates='customer_list' data-hover="hover" data-alignment="left"><i class="valign-wrapper large material-icons ">people</i>customer<span class="right-triangle">&#9656;</span></a>
+                                        
+                                        
+                                        
+                                    </li>
+                                    <!--CustomerDropdown-->
+                                            <ul class="dropdown-content " id="customer_list">
                                             {% if customers is not none %}
                                                 {% for customer in customers %}
                                                     {% if 'customer_id' in session and customer['id'] == session['customer_id'] %}
@@ -70,12 +83,13 @@
                                                     alert("customers is none");
                                                 </script>
                                             {% endif %}
-                                        </ul>
-                                    </li>
+                                            </ul>
                                 {% endif %}
-                                <li class="dropdown">
-                                    <a href="/accounts.html" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" data-hover="dropdown" aria-expanded="false">Account <b class="caret"></b></a>
-                                    <ul class="dropdown-menu scrollable-menu" id="account_list">
+                                <!--AccountDropdown-->
+                                <li class="dropdown right">
+                                    <a class='dropdown-button' href='/accounts.html' data-activates='account_list' data-hover="hover" data-alignment="left"><i class="large material-icons ">account_box</i>Account<span class="right-triangle">&#9656;</span></a> 
+                                </li>
+                                 <ul class="dropdown-content " id="account_list">
                                         {% if accounts is not none %}
                                             {% for account in accounts %}
                                                 {% if 'account_id' in session and account['id'] == session['account_id'] %}
@@ -90,21 +104,22 @@
                                             </script>
                                         {% endif %}
                                     </ul>
-                                </li>
-                                <li><a href="/settings">Settings <span class="glyphicon glyphicon-wrench"></span></a></li>
+                                <li><a href="/settings"><i class="valign-wrapper large material-icons left">settings</i>Setting</a></li>
                                 <li role="separator" class="divider"></li>
-                                <li><a href="/logout">Logout <span class="glyphicon glyphicon-log-out"></span></a></li>
+                                <li><a href="/logout"><i class="valign-wrapper large material-icons left">exit_to_app</i>Logout</a></li>
                             </ul>
                         </li>
                     {% else %}
                         {# Before Logged in #}
-                        <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-                        <li><a href="/register"><span class="glyphicon glyphicon-plus"></span> Register</a></li>
+                        <li class="right"><a href="/login"><i class=" valign-wrapper tiny material-icons right">exit_to_app</i>Login</a></li>
+                        <li class="right"><a href="/register"><i class="valign-wrapper tiny material-icons right">create</i>Register</a></li>
                     {% endif %}
                 </ul>
             </div> <!-- .navbar-collapse -->
         </div> <!-- .container-fluid -->
     </nav>
+</div>
+    <script>$(".button-collapse").sideNav();</script>
     <script src="/navbar.js"></script>
 {% else %}
     {% if msg | length > 0 %}

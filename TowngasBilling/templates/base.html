@@ -2,16 +2,42 @@
 <html>
     {% include 'head.html' %}
     <body>
+
+        
+        
         {% include 'banner.html' %}
         {% include 'navbar.html' %}
+       
+        
+        <main>
+            <div id="content">
+                {% block content_without_container %}
+                    <div class="container navbar_margin_adjust">
+                        {% block content %}
+                        {% endblock %}
+                    </div>
+                {% endblock %}
+            </div>
 
-        <div id="content">
-            {% block content_without_container %}
-                <div class="container navbar_margin_adjust">
-                    {% block content %}
-                    {% endblock %}
-                </div>
-            {% endblock %}
+        </main>
+            
+        
+       <!--Foooter-->
+      <footer class="page-footer blue  ">
+        <div class="container ">
+          <div class="row">
+            <div class="col sl6">
+              <h5 class="white-text">Footer Content</h5>
+              <p class="grey-text text-lighten-4">You can use rows and columns here to organize your footer content.</p>
+            </div>
+          </div>
         </div>
+        <div class="footer-copyright">
+        <div class="container">
+            © 2018 Copyright Text
+            <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
+          </div>
+        </div>
+      </footer>
     </body>
 </html>

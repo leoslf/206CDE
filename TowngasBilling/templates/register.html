@@ -4,79 +4,76 @@
 
 {% block content %}
 <script src="js/validid.js"></script>
-<!-- Login Page -->
-<div class="container bg-white">
-    <!-- Login Panel -->
-    <div id="login_panel">
-        <div class="panel panel-default">
-            <!-- Panel Heading -->
-            <div class="panel-heading">
-                <div class="panel-title">Register</div>
-            </div>
-            <!-- Panel Body -->
-            <div class="panel-body">
-                {% include 'msg.html' %}
-                <!-- Login Form -->
-                <form role="form" data-toggle="validator" method="post" action="register">
-                    <!-- Name Line -->
-                    <div class="form-group">
-                        <label class="control-label">Name</label>
-                        <div class="row">
-                            <div class="form-group col-sm-6">
-                                <input type="text" class="form-control" name="given_name" placeholder="Given Name" required />
-                                <div class="help-block with-errors"></div>
-                            </div>
-                            <div class="form-group col-sm-6">
-                                <input type="text" class="form-control" name="last_name" placeholder="Last Name" required />
-                                <div class="help-block with-errors"></div>
-                            </div>
 
-                    </div>
-                    <!-- HKID Line -->
-                    <div class="form-group">
-                        <label class="control-label">HKID</label>
-                        <input data-hkid class="form-control" name="HKID" placeholder="HKID" data-table="customer" data-column="HKID" required />
-                        <div class="help-block with-errors"></div>
-                    </div>
-                    <!-- Username Line -->
-                    <div class="form-group">
-                        <label for="username" class="control-label">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" placeholder="Username" data-check_exists="" data-table="login" data-column="username" required />
-                        <div class="help-block with-errors"></div>
-                    </div>
-                    <!-- Password Line -->
-                    <div class="form-group">
-                        <label for="password" class="control-label">Password</label>
-                        <div class="row">
-                            <div class="form-group col-sm-6">
-                                <input type="password" class="form-control" data-minlength="8" id="password" name="password" placeholder="Password" required />
-                                <div class="help-block with-errors"></div>
-                            </div>
-                            <div class="form-group col-sm-6">
-                                <input type="password" class="form-control" id="passwordconfirm" name="passwordconfirm" data-match="#password" data-match-error="Confirm must match Password!" placeholder="Confirm" required />
-                                <div class="help-block with-errors"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Email Line -->
-                    <div class="form-group">
-                        <label for="email" class="control-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="Email" data-check_exists="" data-table="customer" data-column="email" required />
-                        <div class="help-block with-errors"></div>
-                    </div>
-                    <!-- Address Box -->
-                    <div class="form-group">
-                        <label for="address" class="control-label">Address</label>
-                        <textarea class="form-control" maxlength="256" name="address" required></textarea>
-                        <div class="help-block with-errors"></div>
-                    </div>
-                    <!-- Submit Button -->
-                    <button type="submit" class="btn btn-success">Submit</button>
+
+<!-- Login Page -->
+<div class="container">
+    <br><br>
+    <div class="card blue lighten-5">
+        <div class="container">
+            <div class="row">
+                <form class="col s12" role="form" data-toggle="validator" method="post" action="register">
+                    <h1 class="light">Register</h1><hr> 
+                        <!-- Name Line -->
+
+                                    <div class="row">
+                                        <div class="input-field col s6">
+                                            <input type="text" class="validate" name="given_name" >
+                                            <label for="given_name" class="control-label"  data-error="Please insert Given Name" data-success="Complet" >Given Name</label>
+                                        </div>
+                                        <div class="form-group input-field col s6">
+                                            <input type="text" class="form-control validate" name="last_name" required>
+                                            <label for="last_name" class="control-label" data-error="Please insert Last Name"data-success="Complet">Last Name</label>
+                                        </div>
+                                    </div>
+                        <!-- HKID Line -->
+
+                                    <div class="row">
+                                        <div class="form-group input-field  col s6">
+                                            <input data-hkid class="form-control validate" name="HKID"  data-table="customer" data-column="HKID" type="text" required >
+                                            <label for="HKID" data-error="Please insert HKID" data-success="Correct HKID">Hong Kong ID</label>
+                                        </div>
+                                    </div>
+                        <!-- Username Line -->
+                                
+                                    <div class="form-group input-field">
+                                        <label for="username" class="control-label"  data-error="This user name are not available" data-success="right">Username</label>
+                                        <input type="text" class="form-control" id="username" name="username"  data-check_exists="" data-table="login" data-column="username" required >
+                                    </div>
+                        <!-- Password Line -->
+                               
+                                    <div class="row">
+                                        <div class="form-group input-field  col s6">
+                                            <input type="password" class="form-control validate" data-minlength="8" id="password" name="password"  required >
+                                            <label for="password"  date-error="At least 8 digit" data-success="right">Password</label> 
+                                        </div>
+                                        <div class="form-group input-field  col s6">
+                                            <input type="password" class="form-control validate" id="passwordconfirm" name="passwordconfirm" data-match="#password" data-match-error="Confirm must match Password!"  required >
+                                            <label for="passwordconfirm"  data-error="Please insert same password" data-success="right"> Confirm Password</label>
+                                        </div>
+                                    </div>              
+                        <!-- Email Line -->
+
+                                    <div class=" input-field">
+                                        <label for="email" class="control-label "  data-error="Please check your email address" data-success="right">Email</label>
+                                        <input type="email" class="form-control validate" id="email" name="email"  data-check_exists="" data-table="customer" data-column="email" required >      
+                                    </div>
+                        <!-- Address Box -->
+
+                                    <div class=" input-field">
+                                        <label for="address" class="control-label "  data-error="Please insert address"data-success="right">Address</label>
+                                        <textarea class="form-control materialize-textarea validate" maxlength="256" name="address" required></textarea> 
+                                    </div>
+                        <!-- Submit Button -->
+                                    <button type="submit" class="waves-effect waves-light btn">Submit
+                                    </button><br><br>
                 </form>
-            </div>
+            </div>  
         </div>
     </div>
+    <div class="">{% include 'msg.html' %}</div>             
 </div>
+
 <script src="js/validator.js"></script>
 <script>
     $.fn.validator.Constructor.INPUT_SELECTOR = ':input:not([type="hidden"], [type="submit"], [type="reset"], button)';

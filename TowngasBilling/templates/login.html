@@ -4,44 +4,49 @@
 
 {% block content %}
 <!-- Login Page -->
-<div class="container bg-white">
+<div class="container">
     <!-- Login Panel -->
-    <div id="login_panel">
-        <div class="panel panel-default">
-            <!-- Panel Heading -->
-            <div class="panel-heading">
-                <div class="panel-title">Login</div>
-            </div>
-            <!-- Panel Body -->
-            <div class="panel-body">
-                {% include 'msg.html' %}
+    <br> <br>
+    <div class="card  blue lighten-5">
+              
                 <!-- Login Form -->
-                <form class="form-horizontal" method="post" action="login">
-                    <div class="container-fluid">
+                <div class="container">
+                    <br><h1>Login</h1><br>
+                    <form class="form-horizontal" method="post" action="login">
+                    
                         <!-- Username Line -->
+
                         <div class="form-group">
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-user"></span>
-                                </span>
-                                <input type="text" class="form-control" name="username" required="required" placeholder="Username"/>
+                            <div class="input-field">
+                            
+                                    <i class="material-icons prefix">person</i>
+                                
+                                <input type="text" class="form-control" name="username" required="required" >
+                                <label for="username">User Name</label>
                             </div>
                         </div>
                         <!-- Password Line -->
                         <div class="form-group">
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-lock"></span>
-                                </span>
-                                <input type="password" class="form-control" name="password" required="required" placeholder="Password"/>
+                            <div class="input-field">
+                                
+                                    <i class="material-icons prefix">lock_open</i>
+                                
+                                <input type="password" class="form-control" name="password" required="required">
+                                <label for="password">Password</label>
                             </div>
                         </div>
                         <!-- Submit Button -->
-                        <button type="submit" class="btn btn-success">Submit</button>
-                    </div>
+                        <br>
+
+                        <button class="btn waves-effect waves-light center" type="submit" name="action">Login
+                            <i class="material-icons right">send</i>
+                        </button>
                 </form>
-            </div>
-        </div>
+                </div>
+                {% include 'msg.html' %}
+
+            
+       
     </div>
 </div>
 {% endblock %}

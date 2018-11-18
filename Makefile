@@ -18,16 +18,16 @@ directory_structure: $(TARGET)/ docs/ tests/
 	mkdir -p $@
 
 deps:
-	$(VENV_ACTIVATE) $(BIN)/pip install -Ur $(PIP_REQUIREMENTS)
+	pip install -Ur $(PIP_REQUIREMENTS)
 
 freeze: venv
-	$(VENV_ACTIVATE) $(BIN)/pip freeze > $(PIP_REQUIREMENTS)
+	pip freeze > $(PIP_REQUIREMENTS)
 	
 devbuild: venv setup.py
-	$(VENV_ACTIVATE) $(BIN)/python setup.py install
+	@python setup.py install
 
-test: devbuild tests/runtests.py
-	$(VENV_ACTIVATE) $(BIN)/python tests/runtests.py
+test: tests
+	@py.test tests
 
 clean_venv: $(VENV_DIR)
 	$(RM) $(VENV_DIR)

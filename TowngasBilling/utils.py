@@ -128,9 +128,6 @@ def dateformat(value, format='%d-%b-%Y'):
 
 def datemath(value, **kwargs):
     value = datetime.datetime.strptime(value, "%d-%b-%y")
-    print (value)
     if len(kwargs) > 0:
-        print (str(kwargs))
         value += relativedelta(**kwargs)
-    print (value)
     return dateformat(value)

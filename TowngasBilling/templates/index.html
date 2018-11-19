@@ -3,6 +3,26 @@
 {% set title = "Home" %}
 
 {% block content_without_container %}
+<script type="text/javascript">
+       $(document).ready(function(){
+      $('.parallax').parallax();
+    });
+        
+</script>
+    <div class="parallax-container">
+    <div class="parallax"><img src="/images/web-background.jpg"></div>
+  </div>
+  <div class="section white">
+    <div class="row container">
+      <h2 class="header">Parallax</h2>
+      <p class="grey-text text-darken-3 lighten-3">Parallax is an effect where the background content or image in this case, is moved at a different speed than the foreground content while scrolling.</p>
+    </div>
+  </div>
+  
+
+
+
+<!--OLd Content
     <section id="intro">
         <div class="container clearfix">
             <div class="row">
@@ -23,4 +43,5 @@
             </div>
         </div>
     </section>
+-->
 {% endblock %}

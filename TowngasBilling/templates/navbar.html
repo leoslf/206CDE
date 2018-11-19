@@ -41,10 +41,14 @@
 
 <div class="navbar-fixed">
     <nav class="  light-blue darken-1" id="shared_navbar container">
-        <div class="container nav-wrapper">            
+        <div class="container nav-wrapper">
+           
             <div class="navbar" id="navbar">
                 <!--Nav Item-->
-                <ul class="left">
+                <ul class="left ">
+<li> <a href="#!" class=" ">
+      <img src="../static/images/tg_logo.png" height="30" width ="30">
+    </a>  </li>
                     {% for navigation in navigations %}
                         <li><a href="/{{ navigation['href'] }}">{{ navigation['caption'] }}</a></li>
                     {% endfor %}
@@ -63,7 +67,7 @@
                                 {% if g.authentication(err_msg=msg) %}
                                     <li><a href="/admin"> <i class="valign-wrapper large material-icons ">assignment</i>Admin Panel</a></li>
                                     <li class="dropdown">
-                                        <a class='dropdown-button' href='#' data-activates='customer_list' data-hover="hover" data-alignment="left"><i class="valign-wrapper large material-icons ">people</i>customer<span class="right-triangle">&#9656;</span></a>
+                                        <a class='dropdown-button' href='#' data-activates='customer_list' data-hover="hover" data-alignment="left"><i class="valign-wrapper large material-icons ">people</i>Customer<span class="right-triangle">&#9656;</span></a>
                                         
                                         
                                         

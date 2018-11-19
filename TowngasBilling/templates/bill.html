@@ -1,9 +1,12 @@
 {% extends 'base.html' %}
-
 {% set title = "Bill" %}
 
-{% if 'account_id' in session %}
+{% block content %}
 
+{% if 'account_id' in session %}
+        {% include 'bill_template.html' %} 
 {% else %}
-    Please first select account.
+        Please first select account.
 {% endif %}
+
+{% endblock %}

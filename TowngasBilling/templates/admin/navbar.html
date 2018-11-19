@@ -1,6 +1,21 @@
 {% set results = query("navigation", orderby="position", condition = "bar = 'cms'") %}
 
 {% if results is not none %}
+
+<style type="text/css">
+    header, main, footer {
+      padding-left: 300px;
+    }
+
+    @media only screen and (max-width : 992px) {
+      header, main, footer {
+        padding-left: 0;
+      }
+    }
+          
+</style>
+
+
      <ul id="slide-out" class="side-nav fixed">
                 <li class="text-center"> 
                     <a href="."><strong>CMS</strong></a>

@@ -3,7 +3,24 @@
 
 {% block content %}
 
+<link rel="stylesheet" href="/sidenav.css" />
+
 {% if 'account_id' in session %}
+	{% set results = query("Bill", condition = "account_id = {{ str(session['account_id']) }}") %}
+	<!-- sidenav -->
+	<ul id="slide-out" class="side-nav fixed">
+		<li class="text-center"> 
+			<a href="."><strong>Bill</strong></a>
+		</li>
+		<li class="divider"></li>
+		{% if results %}
+			{% for item in results %}
+			<li>
+				<a href="{{ item['href'] }}">{{ item['caption'] }}</a>
+			</li>
+			{% endfor %}
+		{% endif %}
+	</ul>
         {% include 'bill_template.html' %} 
 {% else %}
         Please first select account.

@@ -2,31 +2,20 @@
 
 {% if results is not none %}
 
-<style type="text/css">
-    header, main, footer {
-      padding-left: 300px;
-    }
-
-    @media only screen and (max-width : 992px) {
-      header, main, footer {
-        padding-left: 0;
-      }
-    }
-          
-</style>
+<link rel="stylesheet" href="/sidenav.css" />
 
 
-     <ul id="slide-out" class="side-nav fixed">
-                <li class="text-center"> 
-                    <a href="."><strong>CMS</strong></a>
-                </li>
-                <li class="divider"></li>
-                {% for item in results %}
-                <li>
-                    <a href="{{ item['href'] }}">{{ item['caption'] }}</a>
-                </li>
-                {% endfor %}
-            </ul>
+<ul id="slide-out" class="side-nav fixed">
+	<li class="text-center"> 
+		<a href="."><strong>CMS</strong></a>
+	</li>
+	<li class="divider"></li>
+	{% for item in results %}
+	<li>
+		<a href="{{ item['href'] }}">{{ item['caption'] }}</a>
+	</li>
+	{% endfor %}
+</ul>
 {% else %}
     {{ macros.error("results is None") }}
 {% endif %}

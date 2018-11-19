@@ -90,12 +90,11 @@ vim: ft=htmldjango
 
 {% set title = "Bill " + (request.args.get('account_id') if 'account_id' in request.args else "AccountNumberMissing") %}
 <html>
-<head>
-    {% include 'head.html' %}
-    <link rel="stylesheet" type="text/css" href="page.css" />
-    <link rel="stylesheet" type="text/css" href="bill.css" />
-</head>
 <body>
+	{% include 'stylesheet.html' %}
+
+	<link rel="stylesheet" type="text/css" href="page.css" />
+	<link rel="stylesheet" type="text/css" href="bill.css" />
 {% if g.authentication() or is_bill_visible(request.args) %}
     {% set bill = query_bill(request.args) %}
     {% set bill_date = request.args.get('date') | default('01-Dec-17', true)  %}

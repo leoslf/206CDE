@@ -5,41 +5,26 @@
 {% set results = query("navigation", orderby="position", condition = "bar = 'settings'", err_msg=msg) %}
 
 {% if results is not none %}
+<link rel="stylesheet" href="/sidenav.css" />
 
-<style type="text/css">
-    header, main, footer {
-      padding-left: 300px;
-    }
-
-    @media only screen and (max-width : 992px) {
-      header, main, footer {
-        padding-left: 0;
-      }
-    }
-          
-</style>
 
 <ul id="slide-out" class="side-nav fixed">
-                <li class="text-center"> 
-                    <a href="."><strong>Settings</strong></a>
-                </li>
-                <li class="divider"></li>
-                {% for item in results %}
-                <li>
-                    <a href="{{ item['href'] }}">{{ item['caption'] }}</a>
-                </li>
-                {% endfor %}
-            </ul>
-
-
-
-
+	<li class="text-center"> 
+		<a href="."><strong>Settings</strong></a>
+	</li>
+	<li class="divider"></li>
+	{% for item in results %}
+	<li>
+		<a href="{{ item['href'] }}">{{ item['caption'] }}</a>
+	</li>
+	{% endfor %}
+</ul>
    
 {% else %}
-    {% if msg | length > 0 %}
-        {{ macros.error("Exception: " + str(msg[0])) }}
-    {% else %}
-        {{ macros.error("results is None") }}
-    {% endif %}
+	{% if msg | length > 0 %}
+		{{ macros.error("Exception: " + str(msg[0])) }}
+	{% else %}
+		{{ macros.error("results is None") }}
+	{% endif %}
 {% endif %}
 

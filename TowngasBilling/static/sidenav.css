@@ -1,6 +1,6 @@
 .side-nav {
-	top: 65px;
-	width: 300px;
+	top: 65px !important;
+	width: 300px !important;
 }
 
 header, main, footer {

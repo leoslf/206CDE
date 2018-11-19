@@ -1,27 +1,62 @@
 {% extends 'base.html' %}
 {% set title = "Bill" %}
 
+{% set errmsg = [] %}
+
 {% block content %}
 
 <link rel="stylesheet" href="/sidenav.css" />
 
 {% if 'account_id' in session %}
-	{% set results = query("Bill", condition = "account_id = {{ str(session['account_id']) }}") %}
+	{% set bill_params = {} %}
+
+	{% set results = query("Bill", condition = "account_id = %s" | format(str(session['account_id'])), err_msg=errmsg) %}
+	{% set parameters = "" %}
 	<!-- sidenav -->
-	<ul id="slide-out" class="side-nav fixed">
+	<ul class="side-nav fixed" id="bill-list">
 		<li class="text-center"> 
-			<a href="."><strong>Bill</strong></a>
+			<a href="#"><strong>Bill</strong></a>
 		</li>
 		<li class="divider"></li>
 		{% if results %}
-			{% for item in results %}
-			<li>
-				<a href="{{ item['href'] }}">{{ item['caption'] }}</a>
-			</li>
-			{% endfor %}
+			{% if results | length > 0 %}
+				{% for bill in results | reverse %}
+				<li class="bill_date">
+					<a href="#" bill_date="{{ bill['bill_date'] | dateformat(oracle=True) }}">{{ bill['bill_date'] | dateformat }}</a>
+				</li>
+				{% endfor %}
+
+				{% set first_bill = results | reverse | first %}
+				{% set first_date = first_bill['bill_date'] | dateformat(oracle=True) %}
+				{% do bill_params.update({ 'account_id': session['account_id'], 'date': first_date }) %}
+				{% set parameters = "?account_id=%s&date=%s" | format(str(session['account_id']), bill_params['date']) %}
+			{% else %}
+				<li><a> No Bills Available </a></li>
+			{% endif %}
+		{% else %}
+		<script>
+			console.log("Failed to query bills: %s", {{ errmsg | join(";") | tojson | safe }}); 
+		</script>
 		{% endif %}
 	</ul>
-        {% include 'bill_template.html' %} 
+	<div id="bill">
+		<!-- include on page ONLY.  This will be modified by js -->
+		{% include "bill_template.html" %}
+	</div>
+	<script>
+		var account_id = {{ session['account_id'] | tojson | safe }};
+		$("#bill-list li.bill_date a").click(function () {
+			var href = "/bill_template.html?account_id=" + account_id + "&date=" + $(this).attr("bill_date");
+			console.log(href);
+			// update #bill
+			$("#bill").load(href);
+		});
+		/*
+		if ($("#bill-list li.bill_date a").length > 0) {
+			$("#bill-list li.bill_date a").first().trigger("click");
+		}
+		*/
+	</script>
 {% else %}
         Please first select account.
 {% endif %}

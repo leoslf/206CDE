@@ -3,7 +3,7 @@
 vim: ft=htmldjango
 -->
 {% set subtotals = [] %}
-
+{% set errmsg = [] %}
 {% macro bill_table(old, new, month_description) %}
     {% set old_reading = old['absolute_reading'] | default(0, true) %}
     {% set new_reading = new['absolute_reading'] %}
@@ -86,9 +86,10 @@ vim: ft=htmldjango
 {% endmacro %}
             
 
+{% if bill_params is undefined %}
+	{% set bill_params = {} %}
+{% endif %}
 
-
-{% set title = "Bill " + (request.args.get('account_id') if 'account_id' in request.args else "AccountNumberMissing") %}
 <html>
 <body>
 	{% include 'stylesheet.html' %}
@@ -96,8 +97,13 @@ vim: ft=htmldjango
 	<link rel="stylesheet" type="text/css" href="page.css" />
 	<link rel="stylesheet" type="text/css" href="bill.css" />
 {% if g.authentication() or is_bill_visible(request.args) %}
-    {% set bill = query_bill(request.args) %}
-    {% set bill_date = request.args.get('date') | default('01-Dec-17', true)  %}
+    {% if 'account_id' in request.args and 'date' in request.args %}
+        {% do bill_params.update({ 'account_id': request.args.get('account_id'), 'date': request.args.get('date') }) %}
+    {% endif %}
+
+    {% set title = "Bill " + (str(bill_params['account_id']) if 'account_id' in bill_params else "AccountNumberMissing") %}
+    {% set bill = query_bill(bill_params, err_msg=errmsg) %}
+    {% set bill_date = str(bill_params['date'] | default('01-Dec-17', true)) %}
     {% if bill or g.authentication() %}
         {% if bill and bill | length > 0 %}
             {% set bill = bill[0] %}
@@ -125,7 +131,7 @@ vim: ft=htmldjango
                                     {% endfor %}
                                 </td>
                                 <td>
-                                    Account Number: {{ account_number_format(request.args.get('account_id') | default(0, true))  }}<br />
+                                    Account Number: {{ account_number_format(bill_params['account_id'] | default(0, true))  }}<br />
                                     Created Date: {{ bill_date | datemath() }}<br />
                                 </td>
                             </tr>
@@ -174,7 +180,7 @@ vim: ft=htmldjango
                                                     </tr>
                                                 </table>
                                                 <br />
-                                                {{ bill_consumption(request.args.get('account_id') | default(-1, true), bill_date) }}
+                                                {{ bill_consumption(bill_params['account_id'] | default(-1, true), bill_date) }}
                                                 <br /><br />
                                                 <table class="billing-table" border="0">
                                                     <!--
@@ -262,12 +268,12 @@ vim: ft=htmldjango
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    {% if 'account_id' in request.args %}
-                                                        <img class="center-block" src="/code39/{{ "%010d" | format(request.args.get('account_id') | int) }}" height="40px" />
+                                                    {% if 'account_id' in bill_params %}
+                                                        <img class="center-block" src="/code39/{{ "%010d" | format(bill_params['account_id'] | int) }}" height="40px" />
                                                     {% else %}
                                                         <!--
                                                         <div class="alert alert-danger text-center" role="alert">
-                                                            Missing account_id in request.args
+                                                            Missing account_id in bill_params
                                                         </div>
                                                         -->
                                                         <!-- <img class="center-block" src="/code39/AccountNumberMissing?write_text=True" height="40px"/> -->
@@ -293,8 +299,14 @@ vim: ft=htmldjango
             </page>
         {% else %}
             <div class="alert alert-danger alert-dismissible">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                Failed to query bill
+		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+		{% if bill is none %}
+		        Failed to query bill
+		{% else %}
+		        bill length == 0 
+		{% endif %}
+		{{ errmsg }}
+		{{ errmsg | join(';') }}
             </div>
         {% endif %}
     {% else %}

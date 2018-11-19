@@ -96,24 +96,28 @@ def is_bill_visible(args):
     if args is None or not all(attribute in args for attribute in attributes):
         return False
     accounts = query("Account", condition = "account_id = %d" % int(args["account_id"]))
-    if accounts is None and len(accounts) < 1:
+    if accounts is None or len(accounts) < 1:
         return False
     return True
 
-def query_bill(args):
+def query_bill(args, err_msg=None):
     try:
         account_id, date = args['account_id'], args['date']
-        bills = query("Bill_view", condition = "account_id = %s AND bill_date <= TO_DATE('%s', 'YYYYMMDD')" % (str(account_id), str(date)), limit=1)
-        if bills is None or len(bills) < 1:
+        bills = query("Bill_view", condition = "account_id = %s AND bill_date <= TO_DATE('%s', 'DD-MON-YY')" % (str(account_id), str(date)), limit=1)
+        if bills is None:
             raise ValueError
         return bills
     except KeyError as e:
         error(str(e))
         if authentication():
             return query("Account_view", condition = "Account_id = -1")
+        if err_msg:
+            err_msg.append(str(e))
         return None
     except ValueError as e:
         error(str(e))
+        if err_msg:
+            err_msg.append(str(e))
         return None
 
 def utils_export():
@@ -123,7 +127,9 @@ def utils_export():
 def datetimeformat(value, format='%H:%M / %d-%m-%Y'):
     return value.strftime(format)
 
-def dateformat(value, format='%d-%b-%Y'):
+def dateformat(value, format='%d-%b-%Y', oracle=False):
+    if oracle:
+        format = "%d-%b-%y"
     return value.strftime(format)
 
 def datemath(value, **kwargs):

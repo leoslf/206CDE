@@ -3,9 +3,9 @@ function dump_msg() {
     const msgType = ["successmsg", "infomsg", "warnmsg", "errmsg"];
     msgType.forEach(function (e) {
         if (e in cookies && cookies[e].length > 0) {
-            $("#" + e).removeClass("hidden")
-                      .append(cookies[e]);
-            set_cookie(e, "", 0);
+            $("#" + e + "  .modal-text").text(cookies[e]);
+            set_cookie(e, "", 0);	
+	    $("#" + e).modal('open');
         }
     });
     const id_existances = msgType.map(type => $("#" + type).length > 0);
@@ -18,6 +18,9 @@ function dump_msg() {
             }
         }
     }
+    
+    // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
+    $('.modal').modal();
 
 }
 

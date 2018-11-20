@@ -1,9 +1,15 @@
 {# macro definitions #}
 
 {% macro alert(id, alert_type, icon) -%}
-    <div class="alert alert-{{ alert_type }} alert-dismissible hidden" id="{{ id }}" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <span class="glyphicon glyphicon-{{ icon }}"></span>
+    <!-- Modal Structure -->
+    <div id="{{ id }}" class="modal bottom-sheet alert-{{ alert_type }}">
+        <div class="modal-content">
+            <h4>{{ alert_type }}</h4>
+            <p class="modal-text"></p>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
+        </div>
     </div>
 {% endmacro %}
 

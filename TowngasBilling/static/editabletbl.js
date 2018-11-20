@@ -261,7 +261,7 @@ $("#table").closest("form").submit(function (e) {
             $("<input>").attr({
                 name: input_name,
                 type: "text",
-                class: "hidden",
+                class: "hide",
                 value: JSON.stringify(delta_dict)
             }).appendTo(table.parent());
         }

@@ -107,6 +107,7 @@ vim: ft=htmldjango
     {% if bill or g.authentication() %}
         {% if bill and bill | length > 0 %}
             {% set bill = bill[0] %}
+            {% set formatted_account_number = account_number_format(bill_params['account_id'] | default(0, true)) %}
             {% if g.authentication() %}
                 <script>
                     {% for attr in bill %}
@@ -131,7 +132,7 @@ vim: ft=htmldjango
                                     {% endfor %}
                                 </td>
                                 <td>
-                                    Account Number: {{ account_number_format(bill_params['account_id'] | default(0, true))  }}<br />
+                                    Account Number: {{ formatted_account_number  }}<br />
                                     Created Date: {{ bill_date | datemath() }}<br />
                                 </td>
                             </tr>
@@ -270,6 +271,9 @@ vim: ft=htmldjango
                                                 <td>
                                                     {% if 'account_id' in bill_params %}
                                                         <img class="center-block" src="/code39/{{ "%010d" | format(bill_params['account_id'] | int) }}" height="40px" />
+                                                        <div class="center">
+                                                            {{ formatted_account_number  }}
+                                                        </div>
                                                     {% else %}
                                                         <!--
                                                         <div class="alert alert-danger text-center" role="alert">
@@ -298,16 +302,16 @@ vim: ft=htmldjango
                 </div>
             </page>
         {% else %}
-            <div class="alert alert-danger alert-dismissible">
-		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-		{% if bill is none %}
-		        Failed to query bill
-		{% else %}
-		        bill length == 0 
-		{% endif %}
-		{{ errmsg }}
-		{{ errmsg | join(';') }}
-            </div>
+            {% if bill is none %}
+                    Failed to query bill
+            {% else %}
+                    bill length == 0 
+            {% endif %}
+            {{ errmsg }}
+            {{ errmsg | join(';') }}
+            <script>
+                console.log({{ errmsg | join(";") | tojson | safe }});
+            </script>
         {% endif %}
     {% else %}
         failed to query bill and not authenticated

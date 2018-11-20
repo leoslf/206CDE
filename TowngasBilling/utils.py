@@ -67,6 +67,12 @@ def authentication(err_msg=None):
     
     return False
 
+def admin_showing_user_perspective():
+    if 'show_user_perspective' in session and session['show_user_perspective'] == True:
+        return True
+    return False
+
+
 def OrderedDict_column(od, col, nonempty_filter=False):
     debug(od)
     result = [x[col] for x in od if col in x and (nonempty_filter == False or nonempty_filter == True and len(x[col]) > 0)]

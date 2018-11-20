@@ -68,45 +68,77 @@
                                     <li><a href="/admin"> <i class="valign-wrapper large material-icons ">assignment</i>Admin Panel</a></li>
                                     <li class="dropdown">
                                         <a class='dropdown-button' href='#' data-activates='customer_list' data-hover="hover" data-alignment="left"><i class="valign-wrapper large material-icons ">people</i>Customer<span class="right-triangle">&#9656;</span></a>
-                                        
-                                        
-                                        
                                     </li>
-                                    <!--CustomerDropdown-->
-                                            <ul class="dropdown-content " id="customer_list">
-                                            {% if customers is not none %}
-                                                {% for customer in customers %}
-                                                    {% if 'customer_id' in session and customer['id'] == session['customer_id'] %}
-                                                        <li><a href="#" customer_id="{{ str(customer['id']) }}" class="selected_customer"> {{ str(customer['id']) }}</a></li>
-                                                    {% else %}
-                                                        <li><a href="#" customer_id="{{ str(customer['id']) }}"> {{ str(customer['id']) }}</a></li>
-                                                    {% endif %}
-                                                {% endfor %}
+                                    <li>
+                                        <a href="#" id="show_user_perspective">
+                                            {% if admin_showing_user_perspective() %}
+                                                <input type="checkbox" id="show_user_perspective_checkbox" checked />
                                             {% else %}
-                                                <script>
-                                                    alert("customers is none");
-                                                </script>
+                                                <input type="checkbox" id="show_user_perspective_checkbox" />
                                             {% endif %}
-                                            </ul>
+                                            <label>
+                                                <span>Admin User Perspective</span>
+                                            </label>
+                                        </a>
+                                    </li>
+                                    <!-- Customer Dropdown -->
+                                    <ul class="dropdown-content " id="customer_list">
+                                    {% if customers is not none %}
+                                        {% for customer in customers %}
+                                            {% if 'customer_id' in session and customer['id'] == session['customer_id'] %}
+                                                <li><a href="#" customer_id="{{ str(customer['id']) }}" class="selected_customer"> {{ str(customer['id']) }}</a></li>
+                                            {% else %}
+                                                <li><a href="#" customer_id="{{ str(customer['id']) }}"> {{ str(customer['id']) }}</a></li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        <script>
+                                            alert("customers is none");
+                                        </script>
+                                    {% endif %}
+                                    </ul>
+                                    <!-- toggle user perspective -->
+                                    <script>
+                                        $("#show_user_perspective").click(function () {
+                                            console.log("#show_user_perspective click");
+                                            $.ajax({
+                                                type: "POST",
+                                                cache: false,
+                                                url: "/set_show_user_perspective",
+                                                data: { "show_user_perspective": !$("#show_user_perspective_checkbox").prop("checked") },
+                                            })
+                                            .done(function (data, textStatus, jqXHR) {
+                                                console.log(data);
+                                                console.log(textStatus);
+                                                console.log(jqXHR);
+
+                                                $("#show_user_perspective_checkbox").prop("checked", data["state"]);
+                                                console.log("successfully set show_user_perspective: " + data["state"]);
+                                            })
+                                            .fail(function(xhr, textStatus, errorThrown) {
+                                                alert("Request Failed: " + textStatus + ", " + errorThrown);
+                                            });
+                                        });
+                                    </script>
                                 {% endif %}
-                                <!--AccountDropdown-->
+                                <!-- Account Dropdown -->
                                 <li class="dropdown right">
                                     <a class='dropdown-button' href='/accounts.html' data-activates='account_list' data-hover="hover" data-alignment="left"><i class="large material-icons ">account_box</i>Account<span class="right-triangle">&#9656;</span></a> 
                                 </li>
                                  <ul class="dropdown-content " id="account_list">
-                                        {% if accounts is not none %}
-                                            {% for account in accounts %}
-                                                {% if 'account_id' in session and account['id'] == session['account_id'] %}
-                                                    <li><a href="#" account_id="{{ str(account['id']) }}" class="selected_account"> {{ str(account['id']) }}</a></li>
-                                                {% else %}
-                                                    <li><a href="#" account_id="{{ str(account['id']) }}"> {{ str(account['id']) }}</a></li>
-                                                {% endif %}
-                                            {% endfor %}
-                                        {% else %}
-                                            <script>
-                                                alert("accounts is none");
-                                            </script>
-                                        {% endif %}
+                                    {% if accounts is not none %}
+                                        {% for account in accounts %}
+                                            {% if 'account_id' in session and account['id'] == session['account_id'] %}
+                                                <li><a href="#" account_id="{{ str(account['id']) }}" class="selected_account"> {{ str(account['id']) }}</a></li>
+                                            {% else %}
+                                                <li><a href="#" account_id="{{ str(account['id']) }}"> {{ str(account['id']) }}</a></li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        <script>
+                                            alert("accounts is none");
+                                        </script>
+                                    {% endif %}
                                     </ul>
                                 <li><a href="/settings"><i class="valign-wrapper large material-icons left">settings</i>Setting</a></li>
                                 <li role="separator" class="divider"></li>
@@ -123,8 +155,7 @@
         </div> <!-- .container-fluid -->
     </nav>
 </div>
-<!--- <script>$(".button-collapse").sideNav();</script> -->
-<!-- <script src="/navbar.js"></script> -->
+
 {% else %}
     {% if msg | length > 0 %}
         {{ error(msg | join("\n")) }}

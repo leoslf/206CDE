@@ -184,6 +184,23 @@ def logout():
     except Exception as e:
         return errmsg("Exception: " + str(e), request.referrer, redirect)
 
+@application.route("/set_show_user_perspective", methods=["POST"])
+def set_show_user_perspective():
+    additional_data = {}
+    if authentication():
+        try:
+            value = request.form['show_user_perspective'] == 'true'
+            info("[administrator: %s] setting show_user_perspective: %r" % (session['username'], value))
+            session['show_user_perspective'] = value
+            additional_data['state'] = admin_showing_user_perspective()
+            return jsonify(success=True, **additional_data)
+        except Exception as e:
+            error(str(e))
+            additional_data['errmsg'] = str(e)
+            return jsonify(success=False, **additional_data), 400
+
+    return jsonify(success=False), 401
+
 @application.route("/raise_error", methods=["POST"])
 def raise_error():
     if request.method == "POST":

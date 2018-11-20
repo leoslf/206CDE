@@ -2,6 +2,49 @@
 <html>
     <head>
         {% include 'head.html' %}
+        <style type="text/css">
+          @font-face {
+              font-family: 'icomoon';
+              src:url('http://fontmagnet.com/fonts/icomoon.eot');
+              src:url('http://fontmagnet.com/fonts/icomoon.eot?#iefix') format('embedded-opentype'),
+                  url('http://fontmagnet.com/fonts/icomoon.woff') format('woff'),
+                  url('http://fontmagnet.com/fonts/icomoon.ttf') format('truetype'),
+                  url('http://fontmagnet.com/fonts/icomoon.svg#icomoon') format('svg');
+              font-weight: normal;
+              font-style: normal;
+          }
+
+          a{
+            text-decoration: none;
+          }
+
+          .social , .download{
+            width: 400px;
+            position:relative;
+            margin: 50px auto;
+          }
+          .social a, .download a{
+              position: relative;
+              display: inline-block;
+              font-family: "icomoon";
+              font-size: 1.2em;
+              width: 40px;
+              height: 40px;
+              line-height: 40px;
+              color: white;
+              border-radius: 50%;
+              text-align: center;
+              margin-right: 30px;
+              font-smoothing: antialiased;
+          }
+
+          .download a img {
+            height: 50px;
+            width: 50px;
+          }
+
+
+        </style>
     </head>
     <body>
 
@@ -39,9 +82,28 @@
         <div class="container ">
           <div class="row">
             <div class="col sl6">
-              <h5 class="white-text">Footer Content</h5>
-              <p class="grey-text text-lighten-4">You can use rows and columns here to organize your footer content.</p>
+              <h5 class="white-text">CONTACT US</h5>
+              <p class="grey-text text-lighten-4">24-Hour Customer Hotlines</p>
+              <h5 class="white-text">2880 6988</h5>
             </div>
+            <div class="col s16">
+              <h5 class="white-text">CONNECT</h5>
+              <section class="social">
+                <a alt="facebook" class="fb" href="https://www.facebook.com/hktowngas/&#10;" target="_blank" title="facebook">
+                <img src="https://c866088.ssl.cf3.rackcdn.com/assets/facebook40x40.png" alt="facebook"></a>
+                <a alt="instagram" class="ig" href="https://www.instagram.com/towngashk/&#10;" target="_blank" title="instagram"><img src="https://c866088.ssl.cf3.rackcdn.com/assets/instagram40x40.png" alt="instagram"></a>
+                <a alt="google+" class="gp" href="https://plus.google.com/104676714105365582759&#10;" target="_blank" title="google"><img src="https://i0.wp.com/kitchenofeatin.com/wp-content/plugins/ultimate-social-media-plus/images/icons_theme/flat/flat_google.png?resize=40%2C40"</a>
+                <a alt="youtube" class="yt" href="https://www.youtube.com/user/Cookinghk &#10;" target="_blank" title="youtube">
+                <img src="https://c866088.ssl.cf3.rackcdn.com/assets/youtube40x40.png" alt="youtube"></a>
+              </section>
+            </div>
+            <div class="col s16">
+              <h5 class="white-text">DOWNLOAD TOWNGAS APP</h5>
+              <section class="download">
+                <a class="appApple active" href="https://itunes.apple.com/hk/app/towngas-mei-qi-gong-si/id407750575?mt=8" target="blank"><img src="http://chittagongit.com//images/apple-app-store-icon-png/apple-app-store-icon-png-19.jpg"></a>
+                <a class="appTowngas" href="https://play.google.com/store/apps/details?id=com.TownGas" target="blank"><img src="http://icons-for-free.com/free-icons/png/512/312303.png"></a>
+                </section>
+              </div>
           </div>
         </div>
         <div class="footer-copyright">

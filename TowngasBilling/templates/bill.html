@@ -24,17 +24,16 @@
 				<li class="bill_date">
 					<a href="#" bill_date="{{ bill['bill_date'] | dateformat(oracle=True) }}">{{ bill['bill_date'] | dateformat }}</a> 
 					{% if not query("PAYMENT", condition = "account = %s" | format(str(session['account_id'])), err_msg=errmsg) %}
-					<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-				    <input type="hidden" name="business" value="tkk331785@outlook.com">
-				    <input type="hidden" name="cmd" value="_xclick">
-				    <input type="hidden" name="item_name" value="BILL of {{ bill['bill_date'] | dateformat }}">
-				    <input type="hidden" name="amount" value="{{ bill['charge'] }}">
-				    <input type="hidden" name="currency_code" value="HKD">
-				    <input type="image" name="submit" border="0" src="https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif" alt="Pay Now">
-				    <img alt="" border="0" width="1" height="1"
-				      src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" >
+                        <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+                            <input type="hidden" name="business" value="tkk331785@outlook.com" />
+                            <input type="hidden" name="cmd" value="_xclick" />
+                            <input type="hidden" name="item_name" value="BILL of {{ bill['bill_date'] | dateformat }}" />
+                            <input type="hidden" name="amount" value="{{ bill['charge'] }}" />
+                            <input type="hidden" name="currency_code" value="HKD" />
+                            <input type="image" name="submit" border="0" src="https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif" alt="Pay Now" />
+                            <img alt="" border="0" width="1" height="1" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" / >
+                        </form>
 				    {% endif %}
-				</form>
 				</li>
 				{% endfor %}
 

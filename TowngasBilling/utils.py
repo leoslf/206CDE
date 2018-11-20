@@ -95,14 +95,32 @@ def account_number_format(account_number):
     s = "%010d" % int(account_number if account_number else 0)
     return "-".join(map(str, [s[i:i+4] for i in range(0, len(s), 4)]))
 
-def is_bill_visible(args):
+def is_bill_visible(args, err_msg=None):
     if not logged_in():
         return False
     attributes = ('account_id', 'date')
-    if args is None or not all(attribute in args for attribute in attributes):
+    if args is None:
+        if err_msg:
+            err_msg.append("args is None")
         return False
-    accounts = query("Account", condition = "account_id = %d" % int(args["account_id"]))
-    if accounts is None or len(accounts) < 1:
+    if not all(attribute in args for attribute in attributes):
+        if err_msg:
+            err_msg.append("not all(attribute in args for attribute in attributes)")
+        return False
+    try:
+        accounts = query("Account", condition = "id = %d" % int(args["account_id"]))
+    except Exception as e:
+        if err_msg:
+            err_msg.append(str(e))
+        return False
+
+    if accounts is None:
+        if err_msg:
+            err_msg.append("accounts is None")
+        return False
+    if len(accounts) < 1:
+        if err_msg:
+            err_msg.append("len(accounts) < 1")
         return False
     return True
 

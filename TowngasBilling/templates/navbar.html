@@ -47,7 +47,7 @@
                 <!--Nav Item-->
                 <ul class="left ">
 <li> <a href="#!" class=" ">
-      <img src="../static/images/tg_logo.png" height="30" width ="30">
+      <img src="../static/images/tg_logo.png" height="48" >
     </a>  </li>
                     {% for navigation in navigations %}
                         <li><a href="/{{ navigation['href'] }}">{{ navigation['caption'] }}</a></li>
@@ -65,9 +65,9 @@
                             <!--AccountDropdown-->
                             <ul id="dropdown1"class="dropdown-content dropdown-nested"  >
                                 {% if g.authentication(err_msg=msg) %}
-                                    <li><a href="/admin"> <i class="valign-wrapper large material-icons ">assignment</i>Admin Panel</a></li>
+                                    <li><a class="blue-text lighten-2"href="/admin"> <i class="valign-wrapper large material-icons ">assignment</i>Admin Panel</a></li>
                                     <li class="dropdown">
-                                        <a class='dropdown-button' href='#' data-activates='customer_list' data-hover="hover" data-alignment="left"><i class="valign-wrapper large material-icons ">people</i>Customer<span class="right-triangle">&#9656;</span></a>
+                                        <a class='dropdown-button blue-text lighten-2' href='#' data-activates='customer_list' data-hover="hover" data-alignment="left"><i class="valign-wrapper large material-icons ">people</i>Customer<span class="right-triangle">&#9656;</span></a>
                                     </li>
                                     <li>
                                         <a href="#" id="show_user_perspective">
@@ -86,9 +86,9 @@
                                     {% if customers is not none %}
                                         {% for customer in customers %}
                                             {% if 'customer_id' in session and customer['id'] == session['customer_id'] %}
-                                                <li><a href="#" customer_id="{{ str(customer['id']) }}" class="selected_customer"> {{ str(customer['id']) }}</a></li>
+                                                <li><a class="blue-text lighten-2"href="#" customer_id="{{ str(customer['id']) }}" class="selected_customer"> {{ str(customer['id']) }}</a></li>
                                             {% else %}
-                                                <li><a href="#" customer_id="{{ str(customer['id']) }}"> {{ str(customer['id']) }}</a></li>
+                                                <li><a class="blue-text lighten-2"href="#" customer_id="{{ str(customer['id']) }}"> {{ str(customer['id']) }}</a></li>
                                             {% endif %}
                                         {% endfor %}
                                     {% else %}
@@ -123,15 +123,15 @@
                                 {% endif %}
                                 <!-- Account Dropdown -->
                                 <li class="dropdown right">
-                                    <a class='dropdown-button' href='/accounts.html' data-activates='account_list' data-hover="hover" data-alignment="left"><i class="large material-icons ">account_box</i>Account<span class="right-triangle">&#9656;</span></a> 
+                                    <a class='dropdown-button blue-text lighten-2" ' href='/accounts.html' data-activates='account_list' data-hover="hover" data-alignment="left"><i class="large material-icons ">account_box</i>Account<span class="right-triangle">&#9656;</span></a> 
                                 </li>
                                  <ul class="dropdown-content " id="account_list">
                                     {% if accounts is not none %}
                                         {% for account in accounts %}
                                             {% if 'account_id' in session and account['id'] == session['account_id'] %}
-                                                <li><a href="#" account_id="{{ str(account['id']) }}" class="selected_account"> {{ str(account['id']) }}</a></li>
+                                                <li><a class="blue-text lighten-2"href="#" account_id="{{ str(account['id']) }}" class="selected_account"> {{ str(account['id']) }}</a></li>
                                             {% else %}
-                                                <li><a href="#" account_id="{{ str(account['id']) }}"> {{ str(account['id']) }}</a></li>
+                                                <li><a class="blue-text lighten-2"href="#" account_id="{{ str(account['id']) }}"> {{ str(account['id']) }}</a></li>
                                             {% endif %}
                                         {% endfor %}
                                     {% else %}
@@ -140,9 +140,9 @@
                                         </script>
                                     {% endif %}
                                     </ul>
-                                <li><a href="/settings"><i class="valign-wrapper large material-icons left">settings</i>Setting</a></li>
+                                <li><a class="blue-text lighten-2"href="/settings"><i class="valign-wrapper large material-icons left">settings</i>Setting</a></li>
                                 <li role="separator" class="divider"></li>
-                                <li><a href="/logout"><i class="valign-wrapper large material-icons left">exit_to_app</i>Logout</a></li>
+                                <li><a class="blue-text lighten-2"href="/logout"><i class="valign-wrapper large material-icons left">exit_to_app</i>Logout</a></li>
                             </ul>
                         </li>
                     {% else %}

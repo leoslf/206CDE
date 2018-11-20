@@ -96,10 +96,12 @@ vim: ft=htmldjango
 
 	<link rel="stylesheet" type="text/css" href="page.css" />
 	<link rel="stylesheet" type="text/css" href="bill.css" />
-{% if g.authentication() or is_bill_visible(request.args) %}
-    {% if 'account_id' in request.args and 'date' in request.args %}
-        {% do bill_params.update({ 'account_id': request.args.get('account_id'), 'date': request.args.get('date') }) %}
-    {% endif %}
+
+{% if 'account_id' in request.args and 'date' in request.args %}
+    {% do bill_params.update({ 'account_id': request.args.get('account_id'), 'date': request.args.get('date') }) %}
+{% endif %}
+
+{% if g.authentication() or is_bill_visible(bill_params, err_msg=errmsg) %}
 
     {% set title = "Bill " + (str(bill_params['account_id']) if 'account_id' in bill_params else "AccountNumberMissing") %}
     {% set bill = query_bill(bill_params, err_msg=errmsg) %}
@@ -157,6 +159,7 @@ vim: ft=htmldjango
                                                         <td colspan="2"></td>
                                                     </tr>
                                                     -->
+                                                    <!--
                                                     <tr>
                                                         <td>Previous Bill Amount
                                                         </td>
@@ -179,6 +182,7 @@ vim: ft=htmldjango
                                                             {{ "%.02f" | format((subtotals | sum) - (subtotals | sum | round(0, 'floor'))) }}
                                                         </td>
                                                     </tr>
+                                                    -->
                                                 </table>
                                                 <br />
                                                 {{ bill_consumption(bill_params['account_id'] | default(-1, true), bill_date) }}
@@ -316,6 +320,15 @@ vim: ft=htmldjango
     {% else %}
         failed to query bill and not authenticated
     {% endif %}
+{% else %}
+    <script>
+        {% if is_bill_visible(bill_params, err_msg=errmsg) %}
+            console.log("bill visible");
+        {% else %}
+            console.log("bill not visible");
+        {% endif %}
+        console.log({{ errmsg | join("; ") | tojson | safe }});
+    </script>
 {% endif %}
 </body>
 

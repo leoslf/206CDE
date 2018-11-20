@@ -4,7 +4,7 @@
 {% from 'macros.html' import error %}
 {% set msg = [] %}
 {% set customer_msg = [] %}
-{% set navigations = query("navigation", orderby="position", condition="bar = 'shared' ", err_msg=msg) %}
+{% set navigations = query("navigation", orderby="position", condition="bar = 'shared' AND position >= 0",err_msg=msg) %}
 
 {% set account_query_condition = [] %}
 {% if g.authentication() %}

@@ -232,18 +232,31 @@ def use_customer_id():
 
 @application.route("/execute_sql", methods=["POST"])
 def execute_sql():
-    if request.method == "POST":
-        if "sql" in request.form:
-            results = OrderedDict()
-            with database_connection() as conn:
-                with conn.cursor as cursor:
-                    cursor.execute(request.form["sql"])
-                    for item in vars(cursor):
-                        results[item] = cursor[item]
-            return jsonify(successful=True, **results)
+    msg = ""
+    try:
+        if request.method == "POST":
+            if len(request.form["sql"]) < 1:
+                raise ValueError
 
-        error("sql not found in request.form")
-        return jsonify(successful=False, msg="sql not in request.form")
+            sql = request.form["sql"]
+
+            results = {}
+            cursor_results = OrderedDict()
+
+            with database_connection() as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute(sql)
+                    results['cursor_results'] = { attr: str(getattr(cursor, attr)) for attr in dir(cursor)}
+
+                    if 'select' in sql.lower():
+                        columns = list(map(lambda s: s.lower(), list(zip(*cursor.description))[0]))
+                        rows = list(map(lambda row: OrderedDict(zip(columns, row)), cursor.fetchall()))
+                        results['query_results'] = dict(columns=columns, rows=rows)
+                        
+            return jsonify(success=True, **results)
+    except (KeyError, ValueError, Exception) as e:
+        error(e)
+        return jsonify(success=False, exception=str(e)), 400
 
 
 @application.route("/update_table", methods=["POST", "GET"])

@@ -6,16 +6,95 @@
 
 {% block article %}
     <h1>SQL Panel</h1>
-    <form id="sql-form">
+    <form id="sql-form" action="/execute_sql" method="POST">
         <textarea name="sql"></textarea><br />
-        {#
-        {% for attrib in cls %}
-        {% endif %}
-        #}
         <button type="submit" class="btn btn-success">Submit</button>
     </form>
-    <div id+"results"></div>
+    <ul id="cursor_collapsible" class="collapsible hide" data-collapsible = "expandable">
+        <li>
+            <div class="collapsible-header">
+                Database Cursor Attributes Returned (click to expand)
+            </div>
+            <div class="collapsible-body">
+                <table id="cursor">
+                </table>
+            </div>
+        </li>
+    </div>
+    <table id="query_results"></table>
+    
     <script>
-        $("#sql-form").ajaxForm({url: 'execute_sql', type: 'post'});
+        "use strict";
+        $("#sql-form").submit(function (e) {
+            e.preventDefault();
+            var data = $(this).serialize(),
+                url = $(this).attr("action"),
+                method = $(this).attr("method");
+
+            $.ajax({
+                url: url,
+                type: method,
+                data: data 
+            })
+            .done(function (data, textStatus, jqXHR) {
+                console.log(data);
+                if ('query_results' in data) {
+                    if ($("#query_results").length > 0) {
+                        $("#query_results").empty();
+                    }
+                    var thead = $("<thead>"),
+                        tbody = $("<tbody>"),
+                        thead_tr = $("<tr>"),
+                        columns = data['query_results']['columns'],
+                        rows = data['query_results']['rows'];
+
+                    for (var i = 0; i < columns.length; ++i) {
+                        var th = $("<th>").text(columns[i]);
+                        thead_tr.append(th);
+                    }
+                    thead.append(thead_tr);
+
+                    for (var i = 0; i < rows.length; ++i) {
+                        var tr = $("<tr>");
+                        for (var j = 0; j < columns.length; ++j) {
+                            var td = $("<td>").text(rows[i][columns[j]]);
+                            tr.append(td);
+                        }
+                        tbody.append(tr);
+                    }
+
+                    $("#query_results").append(thead);
+                    $("#query_results").append(tbody);
+                }
+                if ('cursor_results' in data) {
+                    var thead = $("<thead>"),
+                        tbody = $("<tbody>"),
+                        thead_tr = $("<tr>"),
+                        columns = ["attribute", "value"],
+                        rows = data['cursor_results'];
+
+                    for (var i = 0; i < columns.length; ++i) {
+                        thead_tr.append($("<th>").text(columns[i]));
+                    }
+                    thead.append(thead_tr);
+
+                    for (var row in rows) {
+                        var tr = $("<tr>");
+                        tr.append($("<td>").text(row));
+                        tr.append($("<td>").text(rows[row]));
+                        tbody.append(tr);
+                    }
+
+                    $("#cursor").append(thead);
+                    $("#cursor").append(tbody);
+                    $("#cursor_collapsible").removeClass("hide");
+                }
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(jqXHR.responseJSON);
+                alert(textStatus + ", " + errorThrown  + ", \n" + jqXHR.responseJSON);
+            });
+        });
     </script>
 {% endblock %}

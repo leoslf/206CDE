@@ -4,17 +4,21 @@
 
 {% block content_without_container %}
 
+{% if not logged_in() %}
+
 <div class="parallax-container">
-	<div class="parallax">
-        {% if not logged_in() %}
-            <img src="/images/web-background.jpg" />
-        {% else %}
-            <div class="container">
-                {% include 'dashboard.html' %}
-            </div>
-        {% endif %}
+    <div class="parallax">
+        <img src="/images/web-background.jpg" />
+
     </div>
 </div>
+{% else %}
+<div class="container">
+    <div class="container">
+        {% include 'dashboard.html' %}
+    </div>
+</div>
+{% endif %}
 
 <div class="section white">
 	<div class="row container">

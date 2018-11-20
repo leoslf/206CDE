@@ -3,18 +3,12 @@
 {% set title = "CMS" %}
 
 {% block content %}
-    <div class="row">
-        <div class="col m3 s12">
-            {% include 'admin/navbar.html' %}
-        </div>
-        <div class="col m9 s12">
-            <div class="container-fluid">
-                <div class="main pull-right" role="main">
-                    {% block article %}
+    {% include 'admin/navbar.html' %}
+    <div class="container-fluid">
+        <div class="main pull-right" role="main">
+            {% block article %}
 
-                    {% endblock %}
-                </div>
-            </div>
+            {% endblock %}
         </div>
     </div>
 {% endblock %}

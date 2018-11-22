@@ -13,6 +13,7 @@ table.balance-table {
 
 table.balance-table td:first-child {
     text-indent: 10px;
+    width: 85%;
 }
 
 table.balance-table tr:first-child > td:first-child {
@@ -24,6 +25,11 @@ table.balance-table td:last-child:not(:first-child) {
     text-align: right;
 }
 
+table.balance-table tr:nth-last-child(2):not(:first-child) > td:last-child:not(:first-child) {
+    font-weight: bold;
+    border-bottom: solid 1px;
+}
+
 table.balance-table tr:last-child > td:last-child:not(:first-child) {
     font-weight: bold;
     border-bottom: double 3px;
@@ -31,89 +37,92 @@ table.balance-table tr:last-child > td:last-child:not(:first-child) {
 
 </style>
 
-{% set payments_errmsg = [] %}
-{% set bills_errmsg = [] %}
-{% set payments = query("payment", orderby="payment_date ASC", condition="account_id = %d" | format(session["account_id"]), err_msg=payments_errmsg) %}
-{% set bills = query("bill_view", orderby="bill_date ASC", condition="account_id = %d" | format(session["account_id"]), err_msg=bills_errmsg) %}
 
 {% if logged_in() %}
     {% if "account_id" in session %}
+        {% set payments = query("payment", orderby="payment_date ASC", condition="account_id = %d" | format(session["account_id"]), err_msg=payments_errmsg) %}
+        {% set bills = query("bill_view", orderby="bill_date ASC", condition="account_id = %d" | format(session["account_id"]), err_msg=bills_errmsg) %}
 
         {% set total_payment = [] %}
         {% set total_charge = [] %}
 
+        {% set payments_errmsg = [] %}
+        {% set bills_errmsg = [] %}
+
         <h1>Account Balance</h1>
-        <div class="containter">
-            <table class="balance-table">
-                <tbody>
-                    <tr>
-                        <td>Payment</td>
-                    </tr>
-                    {% if payments is not none %}
-                        {% for payment in payments %}
-                            <tr>
-                                <td>
-                                    {{ payment['payment_date'] | dateformat("%Y-%m-%d") }}
-                                </td>
-                                <td>
-                                    {{ "%.2f" | format(payment['amount']) }}
-                                </td>
-                            </tr>
-                            {% do total_payment.append(payment['amount']) %}
-                        {% endfor %}
-                    {% else %}
-                        <script>
-                            alert({{ payments_errmsg | join("\n") | tojson | safe }});
-                        </script>
-                    {% endif %}
-                    <tr>
-                        <td>
-                        </td>
-                        <td>
-                            {{ total_payment | sum | round(2) }}
-                        </td>
-                    </tr>
-                </tbody>
-                <tbody>
-                    <tr>
-                        <td>LESS: Bill</td>
-                    </tr>
-                    {% if bills is not none %}
-                        {% for bill in bills %}
-                            <tr>
-                                <td>
-                                    {{ bill['bill_date'] | dateformat("%Y-%m-%d") }}
-                                </td>
-                                <td>
-                                    {{ "%.2f" | format(bill['charge']) }}
-                                </td>
-                            </tr>
-                            {% do total_charge.append(bill['charge']) %}
-                        {% endfor %}
-                    {% else %}
-                        <script>
-                            alert({{ bills_errmsg | join("\n") | tojson | safe }});
-                        </script>
-                    {% endif %}
-                    <tr>
-                        <td>
-                        </td>
-                        <td>
-                            {{ "%.2f" | format(total_charge | sum) }}
-                        </td>
-                    </tr>
-                </tbody>
-                <tbody>
-                    <tr>
-                        <td>Balance</td>
-                        <td>
-                            {{ "%.2f" | format((total_payment | sum) - (total_charge | sum)) }}
-                        </td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                </tfoot>
-            </table>
+        <div class="row">
+            <div class="col s8 push-s2">
+                <table class="balance-table">
+                    <tbody>
+                        <tr>
+                            <td>Payment</td>
+                        </tr>
+                        {% if payments is not none %}
+                            {% for payment in payments %}
+                                <tr>
+                                    <td>
+                                        {{ payment['payment_date'] | dateformat("%Y-%m-%d") }}
+                                    </td>
+                                    <td>
+                                        {{ "%.2f" | format(payment['amount']) }}
+                                    </td>
+                                </tr>
+                                {% do total_payment.append(payment['amount']) %}
+                            {% endfor %}
+                        {% else %}
+                            <script>
+                                alert({{ payments_errmsg | join("\n") | tojson | safe }});
+                            </script>
+                        {% endif %}
+                        <tr>
+                            <td>
+                            </td>
+                            <td>
+                                {{ "%.2f" | format(total_payment | sum) }}
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody>
+                        <tr>
+                            <td>LESS: Bill</td>
+                        </tr>
+                        {% if bills is not none %}
+                            {% for bill in bills %}
+                                <tr>
+                                    <td>
+                                        {{ bill['bill_date'] | dateformat("%Y-%m-%d") }}
+                                    </td>
+                                    <td>
+                                        {{ "%.2f" | format(bill['charge']) }}
+                                    </td>
+                                </tr>
+                                {% do total_charge.append(bill['charge']) %}
+                            {% endfor %}
+                        {% else %}
+                            <script>
+                                alert({{ bills_errmsg | join("\n") | tojson | safe }});
+                            </script>
+                        {% endif %}
+                        <tr>
+                            <td>
+                            </td>
+                            <td>
+                                {{ "%.2f" | format(total_charge | sum) }}
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody>
+                        <tr>
+                            <td>Balance</td>
+                            <td>
+                                {{ "%.2f" | format((total_payment | sum) - (total_charge | sum)) }}
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                    </tfoot>
+                </table>
+            </div>
         </div>
     {% else %}
         Please select account.

@@ -154,12 +154,18 @@ def insert(table,
         conn = connection
 
     try:
+        results = query(table, description=True)
+        debug(sql)
         with conn.cursor() as cursor:
-            new_id_var = cursor.var(cx_Oracle.NUMBER)
-            cursor.execute(sql  + " returning id into :new_id", {"new_id": new_id_var})
-            new_id  = new_id_var.getvalue()[0]
-            debug("new_id: '%r'" % new_id)
-            return new_id
+            if "id" in results["columns"]:
+                new_id_var = cursor.var(cx_Oracle.NUMBER)
+                cursor.execute(sql  + " returning id into :new_id", {"new_id": new_id_var})
+                new_id  = new_id_var.getvalue()[0]
+                debug("new_id: '%r'" % new_id)
+                return new_id
+            else:
+                cursor.execute(sql)
+                return cursor.rowcount
 
     except Exception as e:
         msg = "Exception: %s" % str(e)

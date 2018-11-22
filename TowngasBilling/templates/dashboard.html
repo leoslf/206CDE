@@ -15,7 +15,6 @@ vim: ft=htmldjango
 </div>
 
 {% set errmsg = [] %}
-{% set accounts = query("Account_view", condition="Account_id = %d" | format(session["account_id"]), err_msg=errmsg) %}
 
 {% set admin_perspective = g.authentication() and not admin_showing_user_perspective() %}
 <style>
@@ -118,6 +117,10 @@ vim: ft=htmldjango
     background-color: #d9534f;
 }
 </style>
+{% set accounts = none %}
+{% if "account_id" in session %} 
+    {% set accounts = query("Account_view", condition="Account_id = %d" | format(session["account_id"]), err_msg=errmsg) %}
+{% endif %}
 
 <!--Welcome Message--> 
 <h4>Welcome Back, 

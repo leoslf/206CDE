@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% set title = "Account Balance" %}
+
+{% set msg = [] %}
+
+
+{% block content %}
+<style>
+table.balance-table {
+    line-height: 1;
+}
+
+table.balance-table td:first-child {
+    text-indent: 10px;
+}
+
+table.balance-table tr:first-child > td:first-child {
+    font-weight: bold;
+    text-indent: 0;
+}
+
+table.balance-table td:last-child:not(:first-child) {
+    text-align: right;
+}
+
+table.balance-table tr:last-child > td:last-child:not(:first-child) {
+    font-weight: bold;
+    border-bottom: double 3px;
+}
+
+</style>
+
+{% set payments_errmsg = [] %}
+{% set bills_errmsg = [] %}
+{% set payments = query("payment", orderby="payment_date ASC", condition="account_id = %d" | format(session["account_id"]), err_msg=payments_errmsg) %}
+{% set bills = query("bill_view", orderby="bill_date ASC", condition="account_id = %d" | format(session["account_id"]), err_msg=bills_errmsg) %}
+
+{% if logged_in() %}
+    {% if "account_id" in session %}
+
+        {% set total_payment = [] %}
+        {% set total_charge = [] %}
+
+        <h1>Account Balance</h1>
+        <div class="containter">
+            <table class="balance-table">
+                <tbody>
+                    <tr>
+                        <td>Payment</td>
+                    </tr>
+                    {% if payments is not none %}
+                        {% for payment in payments %}
+                            <tr>
+                                <td>
+                                    {{ payment['payment_date'] | dateformat("%Y-%m-%d") }}
+                                </td>
+                                <td>
+                                    {{ "%.2f" | format(payment['amount']) }}
+                                </td>
+                            </tr>
+                            {% do total_payment.append(payment['amount']) %}
+                        {% endfor %}
+                    {% else %}
+                        <script>
+                            alert({{ payments_errmsg | join("\n") | tojson | safe }});
+                        </script>
+                    {% endif %}
+                    <tr>
+                        <td>
+                        </td>
+                        <td>
+                            {{ total_payment | sum | round(2) }}
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>LESS: Bill</td>
+                    </tr>
+                    {% if bills is not none %}
+                        {% for bill in bills %}
+                            <tr>
+                                <td>
+                                    {{ bill['bill_date'] | dateformat("%Y-%m-%d") }}
+                                </td>
+                                <td>
+                                    {{ "%.2f" | format(bill['charge']) }}
+                                </td>
+                            </tr>
+                            {% do total_charge.append(bill['charge']) %}
+                        {% endfor %}
+                    {% else %}
+                        <script>
+                            alert({{ bills_errmsg | join("\n") | tojson | safe }});
+                        </script>
+                    {% endif %}
+                    <tr>
+                        <td>
+                        </td>
+                        <td>
+                            {{ "%.2f" | format(total_charge | sum) }}
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>Balance</td>
+                        <td>
+                            {{ "%.2f" | format((total_payment | sum) - (total_charge | sum)) }}
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                </tfoot>
+            </table>
+        </div>
+    {% else %}
+        Please select account.
+    {% endif %}
+
+{% else %}
+    Please <a href="/login">login</a> first!
+
+{% endif %}
+
+{% endblock %}

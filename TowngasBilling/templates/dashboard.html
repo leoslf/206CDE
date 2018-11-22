@@ -14,9 +14,6 @@ vim: ft=htmldjango
     </ul>
 </div>
 
-{% set errmsg = [] %}
-
-{% set admin_perspective = g.authentication() and not admin_showing_user_perspective() %}
 <style>
 #channels .progress, #active .progress {
     margin: 4px 0 16px 0;
@@ -117,9 +114,23 @@ vim: ft=htmldjango
     background-color: #d9534f;
 }
 </style>
+
+{% set errmsg = [] %}
+
+{% set admin_perspective = g.authentication() and not admin_showing_user_perspective() %}
+
 {% set accounts = none %}
 {% if "account_id" in session %} 
     {% set accounts = query("Account_view", condition="Account_id = %d" | format(session["account_id"]), err_msg=errmsg) %}
+    {% if accounts is none %}
+        <script>
+            {% if errmsg | length > 0 %}
+                alert("accounts is none " + {{ errmsg | join("\n") | tojson | safe }});
+            {% else %}
+                alert("accounts is none but length(errmsg) == 0");
+            {% endif %}
+        </script>
+    {% endif %}
 {% endif %}
 
 <!--Welcome Message--> 
@@ -133,15 +144,6 @@ vim: ft=htmldjango
     {{ accounts[0]["customer_name"] }}
 {% endif %}
 </h4>
-{% if accounts is none %}
-    <script>
-        {% if errmsg | length > 0 %}
-            alert("accounts is none " + {{ errmsg | join("\n") | tojson | safe }});
-        {% else %}
-            alert("accounts is none but length(errmsg) == 0");
-        {% endif %}
-    </script>
-{% endif %}
 
 {% if admin_perspective %}
 

@@ -22,6 +22,7 @@ $("#account_list > li > a").click(function () {
             });
             $(self).addClass("selected_account");
             console.log(self);
+	    window.location.reload();
         });
 });
 
@@ -39,6 +40,7 @@ $("#customer_list > li > a").click(function () {
             });
             $(self).addClass("selected_customer");
             console.log(self);
+	    window.location.reload();
         });
 });
 

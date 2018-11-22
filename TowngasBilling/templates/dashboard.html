@@ -14,18 +14,205 @@ vim: ft=htmldjango
     </ul>
 </div>
 
-{% if g.authentication() and not admin_showing_user_perspective() %}
-<!--Welcome Message--> 
+{% set errmsg = [] %}
+{% set accounts = query("Account_view", condition="Account_id = %d" | format(session["account_id"]), err_msg=errmsg) %}
 
-<H4>Welcome Back, Mr. Demo Admin</H4>  
+{% set admin_perspective = g.authentication() and not admin_showing_user_perspective() %}
+<style>
+#channels .progress, #active .progress {
+    margin: 4px 0 16px 0;
+    height: 4px;
+    border-radius: 0;
+}
+#channels td, #active td {
+    text-align: left;
+    padding: 0 10px 0 0;
+    font-size: 13px;
+}
+#channels .progress-bar, #active .progress-bar {
+    opacity: 0.8;
+}
+.box-content {
+    text-align: center;
+    overflow: auto;
+    color: #999;
+    min-height: 130px;
+}
+
+.box-content td {
+    color: #444;
+    font-size: 13px;
+}
+
+.box-content td i {
+    color: #999;
+}
+
+.box {
+    padding-left: 0;
+    padding-right: 0;
+}
+.box-content table {
+    margin: 0 0 20px 0;
+}
+
+.box tr:nth-child(odd) > td:first-child {
+    width: 90%;
+    font-weight: bold;
+}
+
+.box-content {
+    overflow: hidden;
+    width: auto;
+    height: 190px;
+}
+
+#channels .progress, #active .progress {
+    margin: 4px 0 16px 0;
+    height: 4px;
+    border-radius: 0;
+}
+
+.progress {
+    height: 20px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, .1);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, .1);
+}
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.progress-bar {
+    float: left;
+    width: 0;
+    height: 100%;
+    font-size: 12px;
+    line-height: 20px;
+    color: #fff;
+    text-align: center;
+    background-color: #337ab7;
+    -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .15);
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .15);
+    -webkit-transition: width .6s ease;
+    -o-transition: width .6s ease;
+    transition: width .6s ease;
+}
+
+.progress-bar-info {
+    background-color: #5bc0de;
+}
+.progress-bar-warning {
+    background-color: #f0ad4e;
+}
+.progress-bar-success {
+    background-color: #5cb85c;
+}
+.progress-bar-danger {
+    background-color: #d9534f;
+}
+</style>
+
+<!--Welcome Message--> 
+<h4>Welcome Back, 
+{% if admin_perspective %}
+    Admin
+{% endif %}
+{% if accounts is none or accounts | length < 1 %}
+    Mr. Demo User  
+{% else %}
+    {{ accounts[0]["customer_name"] }}
+{% endif %}
+</h4>
+{% if accounts is none %}
+    <script>
+        {% if errmsg | length > 0 %}
+            alert("accounts is none " + {{ errmsg | join("\n") | tojson | safe }});
+        {% else %}
+            alert("accounts is none but length(errmsg) == 0");
+        {% endif %}
+    </script>
+{% endif %}
+
+{% if admin_perspective %}
 
 <!--First Row-->
 <div class="row">
+    <!-- cards -->
+    <div class="col s4">
+        <div class="card blue lighten-5">
+            <div class="card-content black-text">
+                <span class="card-title">Overview</span>
+                <div class="box" id="active">
+                    <div class="box-content">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td style="width: 100%; font-weight: bold">Total Visits</td>
+                                    <td style="padding-right: 0; text-align: right; font-weight: bold" class="number-total">65,428</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="padding-right: 0">
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-danger progress-bar-total" style="width: 100%;"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 100%">New Visits</td>
+                                    <td style="padding-right: 0; text-align: right; font-weight: bold" class="number-reading">41,341</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="padding-right: 0">
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-success progress-bar-reading" style="width: 63%;"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 100%">Return Visits</td>
+                                    <td style="padding-right: 0; text-align: right; font-weight: bold" class="number-writing">24,087</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="padding-right: 0">
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-info progress-bar-writing" style="width: 37%;"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 100%">Page Views</td>
+                                    <td style="padding-right: 0; text-align: right; font-weight: bold" class="number-idle">94,846</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="padding-right: 0">
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-warning progress-bar-idle" style="width: 100%;"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
     <!-- CARDS -->
-    <div class="col s12 ">
+    <div class="col s8">
         <div class="card blue lighten-5">
             <div class="card-content black-text">
                 <span class="card-title">User Overview</span>
+                <div style="width: 66%; height: auto;">
+                    {% include 'online_user_stat.html' %}
+                </div>
                 <p>
                     Listing all online user account.
                 </p>
@@ -39,9 +226,6 @@ vim: ft=htmldjango
 </div>
 
 {% else %}
-<!--Welcome Message--> 
-
-<H4>Welcome Back, Mr. Demo User</H4>  
 
 <!--First Row-->
 <div class="row">

@@ -10,7 +10,7 @@
 {% if 'account_id' in session %}
 	{% set bill_params = {} %}
 
-	{% set results = query("Bill", condition = "account_id = %s" | format(str(session['account_id'])), err_msg=errmsg) %}
+	{% set results = query("Bill b", "b.*, SUM(b.charge) OVER (PARTITION BY b.Account_id ORDER BY b.bill_date) cumulative_sum", condition = "b.account_id = %d" | format(session['account_id']), err_msg=errmsg) %}
 	{% set parameters = "" %}
 	<!-- sidenav -->
 	<ul class="side-nav fixed" id="bill-list">
@@ -18,12 +18,27 @@
 			<a href="#"><strong>Bill</strong></a>
 		</li>
 		<li class="divider"></li>
-		{% if results %}
+        {% set payments = query("payment", "NVL(SUM(amount), 0) AS total", condition = "account_id = %d" | format(session["account_id"]), err_msg=errmsg) %}
+        {% if payments is not none %}
+            {% if payments | length == 1 %}
+                {% set total_payment = payments[0]["total"] %}
+            {% else %}
+                payments | length != 1
+            {% endif %}
+        {% else %}
+            payments is none
+            {% if errmsg | length > 0 %}
+                {{ errmsg | join("\n") }}
+            {% else %}
+                errmsg | length == 0
+            {% endif %}
+        {% endif %}
+		{% if results is not none %}
 			{% if results | length > 0 %}
 				{% for bill in results | reverse %}
 				<li class="bill_date">
 					<a href="#" bill_date="{{ bill['bill_date'] | dateformat(oracle=True) }}">{{ bill['bill_date'] | dateformat }}
-                        {% if not query("PAYMENT", condition = "account = %s" | format(str(session['account_id'])), err_msg=errmsg) %}
+                        {% if bill["cumulative_sum"] > total_payment %}
                             <form class="form-inline" action="https://www.paypal.com/cgi-bin/webscr" method="post">
                                 <input type="hidden" name="business" value="tkk331785@outlook.com" />
                                 <input type="hidden" name="cmd" value="_xclick" />
@@ -33,13 +48,13 @@
                                 <input type="image" name="submit" border="0" src="https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif" alt="Pay Now" />
                                 <img alt="" border="0" width="1" height="1" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" / >
                             </form>
+                            <form class="form-inline" method="POST" action="/payment">
+                                <input class="hide" type="number" name="amount" value="{{ bill["charge"] }}" />
+                                <div class="icon-container">
+                                    <input class="img-submit" type="image" name="submit" src="https://www.logolynx.com/images/logolynx/b0/b03963a1d18613c6a627f2d7ffc0ee9a.png" />
+                                </div>
+                            </form>
                         {% endif %}
-                        <form class="form-inline" method="POST" action="/payment">
-                            <input class="hide" type="number" name="amount" value="{{ bill["charge"] }}" />
-                            <div class="icon-container">
-                                <input class="img-submit" type="image" name="submit" src="https://www.logolynx.com/images/logolynx/b0/b03963a1d18613c6a627f2d7ffc0ee9a.png" />
-                            </div>
-                        </form>
                     </a> 
 				</li>
 				{% endfor %}

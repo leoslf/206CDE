@@ -1,0 +1,67 @@
+{% from 'macros.html' import table, error %}
+{% extends 'admin/base.html' %}
+{% block article %}
+    {% set results = query("bill_issue_date", description=True) %}
+    <div class="row">
+        <div class="page-header">
+            <h1>Bill Issue Date</h1>
+        </div>
+    </div>
+    {% include 'msg.html' %}
+    <div class="row">
+        <table>
+            <thead>
+                <tr>
+                    {% for column in results['columns'] %}
+                        <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in results['rows'] %}
+                    <tr>
+                        {% for field in row %}
+                            <td>{{ row[field] | dateformat }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="row">
+        <form id="form" method="POST" action="/add_issue_date">
+            <input type="date" name="issue_date" required />
+            <button class="btn waves-effect waves-light" type="submit" name="action" value="submit">
+                Submit <i class="material-icons right">send</i>
+            </button>
+        </form>
+    </div>
+    <script>
+        $("#form").submit(function (e) {
+            e.preventDefault();
+            var data = $(this).serialize(),
+                url = $(this).attr("action"),
+                method = $(this).attr("method");
+
+            $.ajax({
+                url: url,
+                type: method,
+                data: data 
+            })
+            .done(function (data, textStatus, jqXHR) {
+                console.log(data);
+                alert("Successful!");
+                window.location.reload();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(jqXHR.responseJSON);
+                // alert(textStatus + ", " + errorThrown  + ", \n" + jqXHR.responseJSON);
+                if ('msg' in jqXHR.responseJSON) {
+                    alert(jqXHR.responseJSON.msg);
+                } else {
+                    alert("'msg' not in jqXHR.responseJSON");
+                }
+            });
+        });
+{% endblock %}

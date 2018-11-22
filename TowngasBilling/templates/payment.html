@@ -7,8 +7,7 @@
 <div class="container">
     <form id="payment-form" action="/recieve_payment" method="POST">
         <div class="row">
-            <h5>Payment for {{ request.form['item_name'] }}</h5>
-            <p>Pay HKD${{ request.form['amount'] }}<p>
+            <h3>Payment</h3>
         </div>
         <div class="row">
             <label>Accepted Cards</label>
@@ -59,8 +58,50 @@
             </button>
         </div>
     </form>
-    <div id="results">
+    <div id="result">
     </div>
+    <div id="preloader" class="preloader-wrapper big active hide">
+        <div class="spinner-layer spinner-blue">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+        </div>
+
+        <div class="spinner-layer spinner-red">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+        </div>
+
+        <div class="spinner-layer spinner-yellow">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+        </div>
+
+        <div class="spinner-layer spinner-green">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+        </div>
+    </div>
+
 </div>
 <script>
     $("#payment-form").submit(function (e) {
@@ -76,7 +117,17 @@
         })
         .done(function (data, textStatus, jqXHR) {
             console.log(data);
-            $("#result").removeClass().addClass("green-text").html("Successful!");
+            $("#preloader").removeClass("hide");
+            console.log("start timer");
+            setTimeout(function () {
+                console.log("timeout");
+                $("#preloader").addClass("hide");
+                $("#result").removeClass().addClass("green-text").html("Successful! Redirecting back in 5 seconds...");
+                setTimeout(function () {
+                    // redirect back to referrer
+                    window.location = {{ request.referrer | tojson | safe }};
+                }, 5000);
+            }, 5000);
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
             console.log(jqXHR);

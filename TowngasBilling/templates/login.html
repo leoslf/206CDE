@@ -8,42 +8,42 @@
     <!-- Login Panel -->
     <br> <br>
     <div class="card  blue lighten-5">
-              
-                <!-- Login Form -->
-                <div class="container">
-                    <br><h1>Login</h1><br>
-                    <form class="form-horizontal" method="post" action="login">
-                    
-                        <!-- Username Line -->
 
-                        <div class="form-group">
-                            <div class="input-field">
-                            
-                                    <i class="material-icons prefix">person</i>
-                                
-                                <input type="text" class="form-control" name="username" required="required" >
-                                <label for="username">User Name</label>
-                            </div>
-                        </div>
-                        <!-- Password Line -->
-                        <div class="form-group">
-                            <div class="input-field">
-                                
-                                    <i class="material-icons prefix">lock_open</i>
-                                
-                                <input type="password" class="form-control" name="password" required="required">
-                                <label for="password">Password</label>
-                            </div>
-                        </div>
-                        <!-- Submit Button -->
-                        <br>
+        <!-- Login Form -->
+        <div class="container">
+            <br><h1>Login</h1><br>
+            <form class="form-horizontal" method="post" action="login">
 
-                        <button class="btn waves-effect waves-light center" type="submit" name="action">Login
-                            <i class="material-icons right">send</i>
-                        </button>
-                </form><br><br>
+                <!-- Username Line -->
+
+                <div class="form-group">
+                    <div class="input-field">
+
+                        <i class="material-icons prefix">person</i>
+
+                        <input type="text" class="form-control" name="username" required="required" >
+                        <label for="username">User Name</label>
+                    </div>
                 </div>
-                {% include 'msg.html' %}
+                <!-- Password Line -->
+                <div class="form-group">
+                    <div class="input-field">
+
+                        <i class="material-icons prefix">lock_open</i>
+
+                        <input type="password" class="form-control" name="password" required="required">
+                        <label for="password">Password</label>
+                    </div>
+                </div>
+                <!-- Submit Button -->
+                <br>
+
+                <button class="btn waves-effect waves-light center" type="submit" name="action">Login
+                    <i class="material-icons right">send</i>
+                </button>
+            </form><br><br>
+        </div>
+        {% include 'msg.html' %}
 
             
        

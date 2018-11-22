@@ -7,7 +7,8 @@
 <div class="container">
     <form id="payment-form" action="/recieve_payment" method="POST">
         <div class="row">
-            <h3>Payment</h3>
+            <h5>Payment for {{ request.form['item_name'] }}</h5>
+            <p>Pay HKD${{ request.form['amount'] }}<p>
         </div>
         <div class="row">
             <label>Accepted Cards</label>

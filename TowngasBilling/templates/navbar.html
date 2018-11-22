@@ -150,6 +150,7 @@
 
             $("#show_user_perspective_checkbox").prop("checked", data["state"]);
             console.log("successfully set show_user_perspective: " + data["state"]);
+            window.location.reload();
         })
         .fail(function(xhr, textStatus, errorThrown) {
             alert("Request Failed: " + textStatus + ", " + errorThrown);

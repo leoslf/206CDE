@@ -144,6 +144,9 @@ def query_bill(args, err_msg=None):
             err_msg.append(str(e))
         return None
 
+def today():
+    return datetime.date.today()
+
 def utils_export():
     return { name: obj for name, obj in inspect.getmembers(sys.modules[__name__])
                 if (inspect.isfunction(obj) and name not in dir(flask)) }
@@ -156,8 +159,70 @@ def dateformat(value, format='%d-%b-%Y', oracle=False):
         format = "%d-%b-%y"
     return value.strftime(format)
 
-def datemath(value, **kwargs):
-    value = datetime.datetime.strptime(value, "%d-%b-%y")
+def strptime(value, format="%d-%b-%y"):
+    return datetime.datetime.strptime(value, format)
+
+def datemath(value, format="%d-%b-%y", **kwargs):
+    value = strptime(value, format)
     if len(kwargs) > 0:
         value += relativedelta(**kwargs)
     return dateformat(value)
+
+def report_reading(account_id, date, reading):
+    try:
+        conn = database_connection(autocommit=False)
+        if conn is None:
+            raise Exception("failed to get database connection")
+        
+        errmsg = []
+        meters = query("Account a", 
+                        "m.id AS meter_id",
+                        join =  " ".join(map(str, (
+                            "INNER JOIN Premise p ON p.id = a.Premise_id",
+                            "INNER JOIN Meter m ON m.Premise_id = p.id",))),
+                        condition = "a.id = %d" % account_id,
+                        orderby="m.create_timestamp DESC",
+                        limit = 1,
+                        connection=conn,
+                        err_msg=errmsg)
+        if meters is None:
+            raise Exception("error occured in finding meter id, %s" % "\n".join(map(str, errmsg)))
+
+        if len(meters) < 1:
+            raise ValueError("no meters found for account_id: %d" % account_id)
+
+        meter_id = meters[0]["meter_id"]
+        
+        values = {
+                "meter_id": meter_id,
+                "period_start": date,
+                "absolute_reading": reading
+        }
+        
+        errmsg = []
+        if reading < 0:
+            raise ValueError("reading < 0: %d" % reading)
+        readings = query("Meter_reading", condition="meter_id = %d AND period_start < '%s' AND absolute_reading > %d" % (meter_id, date, reading), orderby="absolute_reading DESC")
+        if readings is None:
+            return Exception("Failed in query for meter_reading contradictions, readings is None")
+        if len(readings) > 0:
+            max_reading = readings[0]["absolute_reading"]
+            raise ValueError("smaller absolute meter reading is input (current: %d, last: %d), please contact out Customer Service Holine at 28806988 if this should be wrong" % (reading, max_reading))
+
+
+        rc = insert("Meter_reading", values=values, connection=conn, err_msg=errmsg)
+        if rc < 0:
+            raise ValueError("msg failed to insert: %s" % "\n".join(map(str(errmsg))))
+
+        conn.commit()
+        conn.close()
+        
+    except ValueError as e:
+        error(e)
+        return jsonify(success=False, msg=str(e)), 400
+    except Exception as e:
+        error(e)
+        return jsonify(success=False, msg=str(e)), 500
+
+    return jsonify(success=True)
+

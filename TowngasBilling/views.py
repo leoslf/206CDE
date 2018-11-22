@@ -345,3 +345,50 @@ def png_code39(content):
     response.headers["Content-type"] = "image/png"
     return response
 
+@application.route("/report_reading", methods=["GET"])
+def report_reading_request():
+    required_parameters = ("reading", "date")
+    optional_parameters = ("account_id",)
+    
+    # parameter checking
+    if not logged_in():
+        return jsonify(success=False, msg="Please login first"), 401
+
+    try:
+        if all(param in request.args for param in optional_parameters):
+            account_id = int(request.args.get("account_id"))
+            errmsg = []
+            accounts = query("Account", condition="id = %d" % account_id, err_msg=errmsg)
+            if accounts is None:
+                raise Exception("\n".join(map(str, errmsg)))
+            if len(accounts) < 1:
+                raise ValueError("Cannot find account_id: %d" % account_id)
+        elif "account_id" in session:
+            account_id = session["account_id"]
+        else:
+            raise ValueError("Please select account first")
+
+        if not all(param in request.args for param in required_parameters):
+            raise ValueError("missing parameter(s): %r" % list(param for param in required_parameters if param not in request.args))
+
+        reading = int(request.args.get("reading"))
+
+        date = dateformat(strptime(request.args.get("date"), format="%Y-%m-%d"), oracle=True)
+
+    except ValueError as e:
+        error(e)
+        return jsonify(success=False, msg=str(e)), 400
+    except Exception as e:
+        error(e)
+        return jsonify(success=False, msg=str(e)), 500
+
+    # call helper function
+    return report_reading(account_id, date, reading)
+
+@application.route("/add_issue_date", methods=["POST"])
+def add_issue_date():
+    errmsg = []
+    rc = insert("bill_issue_date", values = {"issue_date": dateformat(strptime(request.form["issue_date"], "%Y-%m-%d"))}, err_msg=errmsg)
+    if rc < 0:
+        return jsonify(success=False, msg = "\n".join(map(str, errmsg))), 400
+    return jsonify(success=True) 

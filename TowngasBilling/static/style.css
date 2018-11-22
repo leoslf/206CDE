@@ -1,5 +1,5 @@
 /* fix the bottom of navbar */
-
+/*
 @font-face {
     font-family: "Fjord One";
     src: url("fonts/FjordOne-Regular.ttf");
@@ -20,11 +20,14 @@
 body {
     font-family: 'Fjord One', serif !important;
 }
+*/
 
+/*
 html, body {
     height: 100%;
 }
-
+*/
+/*
 .sidebar {
     width: 100%;
     margin-bottom: 10px;
@@ -32,13 +35,16 @@ html, body {
     border-color: white;
     float: left;
 }
-
+*/
+/*
 @media (min-width: 767px) {
     .sidebar {
         height: 100%;
     }
 }
+*/
 
+/*
 .sidebar-brand {
     display: block;
     text-align: center;
@@ -52,30 +58,34 @@ html, body {
 .main {
     width: 100%; 
 }
-
+*/
 /* override navbar-brand */
+/*
 .navbar-brand {
     padding: 10px 10px;
 }
+*/
 
 .order:after {
     /* Downward Triangle ~ Caret */
     content: "\25be";
 }
-
+/*
 section {
     font-family: "Yanone Kaffeesatz";
     padding-top: 90px;
     padding-bottom: 90px;
     letter-spacing: 2px;
 }
-
+*/
+/*
 section h1, section h3 {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
     z-index: 10;
 }
+*/
 
-
+/*
 #intro {
     background: url("images/web-background.jpg") center/cover no-repeat;
 
@@ -93,20 +103,20 @@ section h1, section h3 {
     z-index: 2;
 
 }
+*/
 
+/*
 #intro .container {
     vertical-align: middle;
 }
+*/
 
-table {
-    border-spacing: 10px;
-}
-
-
+/*
 #content {
     overflow: auto;
     height: 100%;
 }
+*/
 
 .selected_account {
     font-weight: bold;
@@ -116,7 +126,27 @@ table {
     content: "*";
 }
 
+/*
 .scrollable-menu {
     height: 200px;
     overflow: scroll;
 }
+*/
+
+.icon-container {
+    /*
+    margin-bottom: 20px;
+    padding: 7px 0;
+    */
+    font-size: 24px;
+}
+
+.icon-container img,
+.img-submit {
+    width: 100px;
+}
+
+.form-inline {
+    display: inline-block;
+}
+

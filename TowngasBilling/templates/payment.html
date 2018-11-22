@@ -1,26 +1,16 @@
 {% extends 'base.html' %}
-{% set title = "Bill" %}
+
+{% set title = "Payment" %}
 {% set errmsg = [] %}
+
 {% block content %}
-<style type="text/css">
-.icon-container {
-    margin-bottom: 20px;
-    padding: 7px 0;
-    font-size: 24px;
-}
-
-.icon-container img {
-    width: 100px;
-}
-</style>
-
 <div class="container">
-    <form action="/payment" method="POST">
+    <form id="payment-form" action="/recieve_payment" method="POST">
         <div class="row">
             <h3>Payment</h3>
         </div>
         <div class="row">
-            <label for="fname">Accepted Cards</label>
+            <label>Accepted Cards</label>
         </div>
         <div class="row">
             <div class="icon-container">
@@ -56,12 +46,47 @@
             </div>
         </div>
         <div class="row">
+            <div class="input-field col s12">
+                <label for="amount">Amount</label>
+                <input type="number" id="amount" name="amount" value="{{ amount }}" placeholder="Amount" readonly />
+            </div>
+        </div>
+        <div class="row">
             <button type="submit" class="btn waves-effect waves-light" name="action" value="submit">
                 Submit
                 <i class="material-icons right">send</i>
             </button>
         </div>
     </form>
+    <div id="results">
+    </div>
 </div>
+<script>
+    $("#payment-form").submit(function (e) {
+        e.preventDefault();
+        var data = $(this).serialize(),
+            url = $(this).attr("action"),
+            method = $(this).attr("method");
+
+        $.ajax({
+            url: url,
+            type: method,
+            data: data 
+        })
+        .done(function (data, textStatus, jqXHR) {
+            console.log(data);
+            $("#result").removeClass().addClass("green-text").html("Successful!");
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR);
+            console.log(jqXHR.responseJSON);
+            if ('msg' in jqXHR.responseJSON) {
+                $("#result").removeClass().addClass("red-text").html(jqXHR.responseJSON.msg);
+            } else {
+                console.log("'msg' not in jqXHR.responseJSON");
+            }
+        });
+    });
+</script>
 {% endblock %}
 

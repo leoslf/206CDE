@@ -392,3 +392,41 @@ def add_issue_date():
     if rc < 0:
         return jsonify(success=False, msg = "\n".join(map(str, errmsg))), 400
     return jsonify(success=True) 
+
+@application.route("/recieve_payment", methods=["POST"])
+def recieve_payment():
+    try:
+        if "account_id" not in session:
+            raise ValueError("Please choose account first")
+
+        if "amount" not in request.form:
+            raise ValueError("amount is missing")
+
+        values = {
+                "account_id": session["account_id"],
+                "payment_date": dateformat(today(), oracle=True),
+                "amount": request.form["amount"]
+        }
+
+        errmsg = []
+        rc = insert("payment", values=values, err_msg=errmsg)
+        if rc < 0:
+            raise Exception("Error in insert, %s" % "\n".join(map(str, errmsg)))
+
+    except ValueError as e:
+        error(e)
+        return jsonify(success=False, msg=str(e)), 400
+    except Exception as e:
+        error(e)
+        return jsonify(success=False, msg=str(e)), 500
+
+    return jsonify(success=True)
+
+@application.route("/payment", methods=["POST"])
+def payment():
+    if "amount" not in request.form:
+        return abort(400)
+
+    return render_template("payment.html", amount=request.form["amount"])
+
+

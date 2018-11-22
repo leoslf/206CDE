@@ -222,10 +222,6 @@ vim: ft=htmldjango
                     Listing all online user account.
                 </p>
             </div>
-            <div class="card-action">
-                <a href="#">This is a link</a>
-                <a href="#">This is a link</a>
-            </div>
         </div>
     </div>
 </div>
@@ -275,7 +271,7 @@ vim: ft=htmldjango
 <!--2nd Row-->
 <div class="row">
     <!-- CARDS -->
-    <div class="col s6">
+    <div class="col s5">
         <div class="card blue lighten-5">
             <div class="card-content black-text">
                 <span class="card-title">Report Meter Reading</span>
@@ -296,39 +292,24 @@ vim: ft=htmldjango
                     <span id="report_reading_result"></span>
                 </p>
             </div>
-            <div class="card-action">
-                <a href="#">This is a link</a>
-                <a href="#">This is a link</a>
-            </div>
         </div>
     </div>
+    {% set balances = query("balance", condition="account_id = %d" | format(session["account_id"])) %}
     <!-- CARDS -->
-    <div class="col s6">
+    <div class="col s3">
         <div class="card blue lighten-5">
             <div class="card-content black-text">
-                <span class="card-title">Card Title</span>
-                <p>I am a very simple card. I am good at containing small bits of information.I am convenient because I require little markup to use effectively.</p>
+                <span class="card-title">Balance Summary</span>
+                <p>  
+                    {% if balances is not none %}
+                        {% if balances | length == 1 %}
+                            <input class="right-align" type="number" name"balance" value="{{ balances[0]["balance"] }}" readonly />
+                        {% endif %}
+                    {% endif %}
+                </p>
             </div>
             <div class="card-action">
-                <a href="#">This is a link</a>
-                <a href="#">This is a link</a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!--5nd Row-->
-<div class="row">
-    <!-- CARDS -->
-    <div class="col s4">
-        <div class="card blue lighten-5">
-            <div class="card-content black-text">
-                <span class="card-title">Card Title</span>
-                <p>I am a very simple card. I am good at containing small bits of information.I am convenient because I require little markup to use effectively.</p>
-            </div>
-            <div class="card-action">
-                <a href="#">This is a link</a>
-                <a href="#">This is a link</a>
+                <a href="/account_balance.html">Detailed Records</a>
             </div>
         </div>
     </div>
@@ -336,21 +317,7 @@ vim: ft=htmldjango
     <div class="col s4">
         <div class="card blue lighten-5">
             <div class="card-content black-text">
-                <span class="card-title">Card Title</span>
-                <p>I am a very simple card. I am good at containing small bits of information.I am convenient because I require little markup to use effectively.</p>
-            </div>
-            <div class="card-action">
-                <a href="#">This is a link</a>
-                <a href="#">This is a link</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- CARDS -->
-    <div class="col s4">
-        <div class="card blue lighten-5">
-            <div class="card-content black-text">
-                <span class="card-title">PieChart</span>
+                <span class="card-title">Consumption</span>
                 <!--Piechart-->
                 <svg fill="lightblue" width="200px" height="200px" viewBox="0 0 1 1" class="demo-chart mdl-cell mdl-cell--4-col mdl-cell--5-col-desktop">
                     <use xlink:href="#piechart" mask="url(#piemask)" />

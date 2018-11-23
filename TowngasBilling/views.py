@@ -430,3 +430,26 @@ def payment():
     return render_template("payment.html", amount=request.form["amount"])
 
 
+@application.route("/generate_bill", methods=["POST"])
+def generate_bill():
+    fields = ("account_id", "issue_date")
+    try:
+        data = OrderedDict(zip(fields, [request.form[key] for key in fields]))
+    except KeyError as e:
+        error(e)
+        return jsonify(success=False, msg=str(e)), 400
+
+    debug(data)
+
+    with database_connection() as conn:
+        with conn.cursor() as cursor:
+            try:
+                cursor.execute("CALL generate_bill(%s, '%s')" % tuple(data[key] for key in fields))
+            except Exception as e:
+                error(e)
+                return jsonify(success=False, msg=str(e)), 500
+
+    return jsonify(success=True)
+
+
+

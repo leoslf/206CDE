@@ -131,6 +131,7 @@ vim: ft=htmldjango
             {% endif %}
         </script>
     {% endif %}
+    {% set balances = query("balance", condition="account_id = %d" | format(session["account_id"])) %}
 {% endif %}
 
 <!--Welcome Message--> 
@@ -294,7 +295,6 @@ vim: ft=htmldjango
             </div>
         </div>
     </div>
-    {% set balances = query("balance", condition="account_id = %d" | format(session["account_id"])) %}
     <!-- CARDS -->
     <div class="col s3">
         <div class="card blue lighten-5">

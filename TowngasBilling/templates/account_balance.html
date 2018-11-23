@@ -41,7 +41,7 @@ table.balance-table tr:last-child > td:last-child:not(:first-child) {
 {% if logged_in() %}
     {% if "account_id" in session %}
         {% set payments = query("payment", orderby="payment_date ASC", condition="account_id = %d" | format(session["account_id"]), err_msg=payments_errmsg) %}
-        {% set bills = query("bill_view", orderby="bill_date ASC", condition="account_id = %d" | format(session["account_id"]), err_msg=bills_errmsg) %}
+        {% set bills = query("bill_view", orderby="bill_date ASC", condition="account_id = %d AND MOD(EXTRACT(MONTH FROM bill_date), 2) = 1 " | format(session["account_id"]), err_msg=bills_errmsg) %}
 
         {% set total_payment = [] %}
         {% set total_charge = [] %}
@@ -88,15 +88,17 @@ table.balance-table tr:last-child > td:last-child:not(:first-child) {
                         </tr>
                         {% if bills is not none %}
                             {% for bill in bills %}
+
+                            {% set total = bill['old_charge'] | default(0, true) + bill['new_charge'] | default(0, true) %}
                                 <tr>
                                     <td>
                                         {{ bill['bill_date'] | dateformat("%Y-%m-%d") }}
                                     </td>
                                     <td>
-                                        {{ "%.2f" | format(bill['charge']) }}
+                                        {{ "%.2f" | format(total) }}
                                     </td>
                                 </tr>
-                                {% do total_charge.append(bill['charge']) %}
+                                {% do total_charge.append(total) %}
                             {% endfor %}
                         {% else %}
                             <script>

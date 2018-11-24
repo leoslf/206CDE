@@ -166,7 +166,7 @@ def datemath(value, format="%d-%b-%y", **kwargs):
     value = strptime(value, format)
     if len(kwargs) > 0:
         value += relativedelta(**kwargs)
-    return dateformat(value)
+    return dateformat(value, format)
 
 def report_reading(account_id, date, reading):
     try:

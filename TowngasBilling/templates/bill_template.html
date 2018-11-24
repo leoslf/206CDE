@@ -4,20 +4,18 @@ vim: ft=htmldjango
 -->
 {% set subtotals = [] %}
 {% set errmsg = [] %}
-{% macro bill_table(old, new, month_description) %}
-    {% set old_reading = old['absolute_reading'] | default(0, true) %}
-    {% set new_reading = new['absolute_reading'] %}
-    {% set consumption_unit = new_reading - old_reading %}
+{% macro bill_table(date, old_reading, consumption_unit, charge, month_description) %}
+    {% set new_reading = old_reading + consumption_unit %}
     {% set consumption_MJ = consumption_unit * 48 %}
-    {% set gas_charges = query("dual", "monthly_charge('%s', %d) AS charge" | format(new['period_start']|dateformat, consumption_unit)) %}
+    {% set gas_charges = query("dual", "monthly_charge('%s', %d) AS charge" | format(date, consumption_unit)) %}
     {% set fuel_cost = (consumption_MJ * 0.019) | round(2) %}
     {% set maintenance_charge = 9.5 %}
     <table class="billing-table consumption-table">
         <tbody>
             <tr>
-                <td class="topleft">From {{ old['period_start']|dateformat }}</td>
+                <td class="topleft">From {{ datemath(date, format="%m-%b-%y", months=-1) }}</td>
                 <td class="top bottom" rowspan="2">to</td>
-                <td class="top">{{ new['period_start']|dateformat }}</td>
+                <td class="top">{{ date }}</td>
                 <td class="topleft bottomright">1 unit = 48MJ</td>
                 <td class="topright">Comsumption(MJ)</td>
                 <td rowspan="6">{{ month_description }}</td>
@@ -35,7 +33,7 @@ vim: ft=htmldjango
                 <td>
                     {% if gas_charges and gas_charges | length > 0 %}
                         {% set gas_charge = gas_charges[0]['charge'] | round(2) %}
-                        {{ "%.02f" | format(gas_charge) }}
+                        {{ "%.02f" | format(gas_charge - fuel_cost - maintenance_charge) }}
                     {% else %}
                         Failed to query gas_charge
                         
@@ -58,12 +56,12 @@ vim: ft=htmldjango
                     {{ "%.02f" | format(maintenance_charge) }}
                 </td>
             </tr>
-            {% set subtotal = (gas_charge + fuel_cost + maintenance_charge) | round(2) %}
+            {% set subtotal = charge | round(2) %}
             <tr class="billing-table-end">
                 <td colspan="4">
                 </td>
                 <td>
-                    {{ "%.02f" | format(subtotal) }}
+                    {{ "%.02f" | format(charge) }}
                 </td>
             </tr>
         </tbody>
@@ -71,17 +69,22 @@ vim: ft=htmldjango
     {% do subtotals.append(subtotal) %}
 {% endmacro %}
 
-{% macro bill_consumption(account_id, month) %}
-    {% set consumptions = query("Consumption_view", condition="account_id = %d AND period_start < TO_DATE('%s')" | format(account_id | default(-1, true) | int, month), limit=3) %}
-    {% if consumptions %}
-        <script>
-        {% for consumption in consumptions|reverse %}
-                console.log("{{ consumption['period_start'] | dateformat }}: {{ consumption['absolute_reading'] }}");
-        {% endfor %}
-        </script>
-        {{ bill_table(consumptions[2], consumptions[1], "Last Month") }}
-        <br><br>
-        {{ bill_table(consumptions[1], consumptions[0], "This Month") }}
+{% macro bill_consumption(bill) %}
+
+    {% set consumptions = query("Consumption_view", condition="account_id = %d AND period_start < '%s'" | format(account_id | default(-1, true) | int, bill['bill_date'] | dateformat(oracle=True)), limit=3) %}
+
+    {% if bill is not none%}
+    {# {% if consumptions %} #}
+        {% if bill['old_consumption'] is not none %}
+        {% if consumptions | length > 1 %}
+            {% set abs_reading = consumptions[1]['absolute_reading'] %}
+        {% else %}
+            {% set abs_reading = 0 %}
+        {% endif %}
+            {{ bill_table(datemath(bill['bill_date'] | dateformat(oracle=True), months=-2), abs_reading, bill['old_consumption'], bill['old_charge'], "Last Month") }}
+            <br><br>
+        {% endif %}
+        {{ bill_table(bill['bill_date'] | dateformat(oracle=True), consumptions[0]['absolute_reading'], bill['new_consumption'], bill['new_charge'], "This Month") }}
     {% endif %}
 {% endmacro %}
             
@@ -104,7 +107,7 @@ vim: ft=htmldjango
 {% if g.authentication() or is_bill_visible(bill_params, err_msg=errmsg) %}
 
     {% set title = "Bill " + (str(bill_params['account_id']) if 'account_id' in bill_params else "AccountNumberMissing") %}
-    {% set bill = query_bill(bill_params, err_msg=errmsg) %}
+    {% set bill = query("Bill_view", condition = "account_id = %d AND bill_date = '%s'" | format(bill_params['account_id'] | int, bill_params['date'])) %}
     {% set bill_date = str(bill_params['date'] | default('01-Dec-17', true)) %}
     {% if bill or g.authentication() %}
         {% if bill and bill | length > 0 %}
@@ -151,6 +154,7 @@ vim: ft=htmldjango
                                         <tr>
                                             <td>
                                                 <table class="billing-table" border="0">
+                                                    {# 
                                                     <!--
                                                     <tr>
                                                         <td colspan="2"></td>
@@ -183,9 +187,10 @@ vim: ft=htmldjango
                                                         </td>
                                                     </tr>
                                                     -->
+                                                    #}
                                                 </table>
                                                 <br />
-                                                {{ bill_consumption(bill_params['account_id'] | default(-1, true), bill_date) }}
+                                                {{ bill_consumption(bill) }}
                                                 <br /><br />
                                                 <table class="billing-table" border="0">
                                                     <!--
@@ -224,23 +229,9 @@ vim: ft=htmldjango
                                                         <td>Total bill amount
                                                         </td>
                                                         <td>
-                                                            {{ "%.02f" | format(subtotals | sum) }}
+                                                            {{ "%.02f" | format(bill['charge'] | float) }}
                                                         </td>
                                                         <td class="right-row" rowspan="6"></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Odd cents to be carried forward
-                                                        </td>
-                                                        <td>
-                                                            -{{ "%.02f" | format((subtotals | sum) - (subtotals | sum | round(0, 'floor'))) }}
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Amount due
-                                                        </td>
-                                                        <td>
-                                                            {{ "%.02f" | format(subtotals | sum | round(0, 'floor')) }}
-                                                        </td>
                                                     </tr>
                                                 </table>
                                             </td>
@@ -262,7 +253,7 @@ vim: ft=htmldjango
                                                     <img class="r90" src="https://cdn.pixabay.com/photo/2014/04/02/16/19/barcode-306926_960_720.png" height="50">
                                                 </td>
                                                 <td colspan="2">
-                                                    Please pay this bill by {{ bill_date | datemath(months=+1) }}, ${{ "%.02f" | format(subtotals | sum | round(0, 'floor')) }}
+                                                    Please pay this bill by {{ bill_date | datemath(months=+1) }}, ${{ "%.02f" | format(bill['charge']) }}
                                                 </td>
                                             </tr>
                                             <tr>
